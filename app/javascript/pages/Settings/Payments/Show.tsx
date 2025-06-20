@@ -10,6 +10,8 @@ import { SettingPage } from "$app/parsers/settings";
 import type { ComplianceInfo, PayoutMethod, FormFieldName, User, PayoutDebitCardData } from "$app/types/payments";
 import { formatPriceCentsWithCurrencySymbol, formatPriceCentsWithoutCurrencySymbol } from "$app/utils/currency";
 import { asyncVoid } from "$app/utils/promise";
+import { assertResponseError, request } from "$app/utils/request";
+import { register } from "$app/utils/serverComponentUtil";
 
 import { Button } from "$app/components/Button";
 import { ConfirmBalanceForfeitOnPayoutMethodChangeModal } from "$app/components/ConfirmBalanceForfeitOnPayoutMethodChangeModal";
@@ -17,7 +19,13 @@ import { CountrySelectionModal } from "$app/components/CountrySelectionModal";
 import { Icon } from "$app/components/Icons";
 import { StripeConnectEmbeddedNotificationBanner } from "$app/components/PayoutPage/StripeConnectEmbeddedNotificationBanner";
 import { PriceInput } from "$app/components/PriceInput";
-import { CreditCardForm } from "$app/components/Settings/AdvancedPage/CreditCardForm";
+import { showAlert } from "$app/components/server-components/Alert";
+import { ConfirmBalanceForfeitOnPayoutMethodChangeModal } from "$app/components/server-components/ConfirmBalanceForfeitOnPayoutMethodChangeModal";
+import { CountrySelectionModal } from "$app/components/server-components/CountrySelectionModal";
+import { StripeConnectEmbeddedNotificationBanner } from "$app/components/server-components/PayoutPage/StripeConnectEmbeddedNotificationBanner";
+import { CreditCardForm } from "$app/components/server-components/Settings/CreditCardForm";
+import { Under18WarningAlert } from "$app/components/server-components/Settings/Under18WarningAlert";
+import { UpdateCountryConfirmationModal } from "$app/components/server-components/UpdateCountryConfirmationModal";
 import { Layout } from "$app/components/Settings/Layout";
 import AccountDetailsSection from "$app/components/Settings/PaymentsPage/AccountDetailsSection";
 import AusBackTaxesSection, { type AusBacktaxDetails } from "$app/components/Settings/PaymentsPage/AusBackTaxesSection";
@@ -38,10 +46,85 @@ import { WithTooltip } from "$app/components/WithTooltip";
 
 import logo from "$assets/images/logo-g.svg";
 
+export type PayoutDebitCardData = { type: "saved" } | { type: "new"; element: StripeCardElement } | undefined;
+
+export type User = {
+  country_supports_native_payouts: boolean;
+  country_supports_iban: boolean;
+  need_full_ssn: boolean;
+  country_code: string | null;
+  payout_currency: string | null;
+  is_from_europe: boolean;
+  individual_tax_id_needed_countries: string[];
+  individual_tax_id_entered: boolean;
+  business_tax_id_entered: boolean;
+  guardian_individual_tax_id_entered: boolean;
+  requires_credit_card: boolean;
+  can_connect_stripe: boolean;
+  is_charged_paypal_payout_fee: boolean;
+  joined_at: string;
+  is_legal_guardian_information_required: boolean;
+};
+
 const PAYOUT_FREQUENCIES = ["daily", "weekly", "monthly", "quarterly"] as const;
 type PayoutFrequency = (typeof PAYOUT_FREQUENCIES)[number];
 
-type PaymentsPageProps = {
+export type ComplianceInfo = {
+  is_business: boolean;
+  business_name: string | null;
+  business_type: string | null;
+  business_street_address: string | null;
+  business_city: string | null;
+  business_state: string | null;
+  business_country: string | null;
+  business_zip_code: string | null;
+  business_phone: string | null;
+  job_title: string | null;
+  business_tax_id?: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  street_address: string | null;
+  city: string | null;
+  state: string | null;
+  country: string | null;
+  zip_code: string | null;
+  phone: string | null;
+  nationality: string | null;
+  dob_month: number;
+  dob_day: number;
+  dob_year: number;
+  individual_tax_id?: string | null;
+  updated_country_code?: string | null;
+  first_name_kanji?: string | null;
+  last_name_kanji?: string | null;
+  first_name_kana?: string | null;
+  last_name_kana?: string | null;
+  business_name_kanji?: string | null;
+  business_name_kana?: string | null;
+  building_number?: string | null;
+  street_address_kanji?: string | null;
+  street_address_kana?: string | null;
+  business_building_number?: string | null;
+  business_street_address_kanji?: string | null;
+  business_street_address_kana?: string | null;
+  guardian_first_name?: string | null;
+  guardian_last_name?: string | null;
+  guardian_email?: string | null;
+  guardian_phone?: string | null;
+  guardian_street_address?: string | null;
+  guardian_city?: string | null;
+  guardian_state?: string | null;
+  guardian_country?: string | null;
+  guardian_zip_code?: string | null;
+  guardian_dob_month?: number | null;
+  guardian_dob_day?: number | null;
+  guardian_dob_year?: number | null;
+  guardian_individual_tax_id?: string | null;
+  guardian_stripe_tos_accepted?: boolean;
+  guardian_stripe_processing_tos_accepted?: boolean;
+};
+
+type Props = {
   settings_pages: SettingPage[];
   is_form_disabled: boolean;
   should_show_country_modal: boolean;
@@ -92,7 +175,71 @@ type PaymentsPageProps = {
   };
 };
 
-type ErrorMessageInfo = {
+export type PayoutMethod = "bank" | "card" | "paypal" | "stripe";
+export type FormFieldName =
+  | "first_name"
+  | "last_name"
+  | "first_name_kanji"
+  | "last_name_kanji"
+  | "first_name_kana"
+  | "last_name_kana"
+  | "building_number"
+  | "street_address_kanji"
+  | "street_address_kana"
+  | "street_address"
+  | "city"
+  | "state"
+  | "zip_code"
+  | "dob_year"
+  | "dob_month"
+  | "dob_day"
+  | "phone"
+  | "nationality"
+  | "individual_tax_id"
+  | "business_type"
+  | "business_name"
+  | "business_name_kanji"
+  | "business_name_kana"
+  | "business_street_address"
+  | "business_building_number"
+  | "business_street_address_kanji"
+  | "business_street_address_kana"
+  | "business_city"
+  | "business_state"
+  | "business_zip_code"
+  | "business_phone"
+  | "job_title"
+  | "business_tax_id"
+  | "guardian_first_name"
+  | "guardian_last_name"
+  | "guardian_email"
+  | "guardian_phone"
+  | "guardian_street_address"
+  | "guardian_city"
+  | "guardian_state"
+  | "guardian_zip_code"
+  | "guardian_dob_month"
+  | "guardian_dob_day"
+  | "guardian_dob_year"
+  | "guardian_individual_tax_id"
+  | "guardian_stripe_tos_accepted"
+  | "guardian_stripe_processing_tos_accepted"
+  | "routing_number"
+  | "transit_number"
+  | "institution_number"
+  | "bsb_number"
+  | "bank_code"
+  | "branch_code"
+  | "clearing_code"
+  | "sort_code"
+  | "ifsc"
+  | "account_type"
+  | "account_holder_full_name"
+  | "account_number"
+  | "account_number_confirmation"
+  | "paypal_email_address";
+
+export type ErrorMessageInfo = {
   message: string;
   code?: string | null;
 };
@@ -790,7 +937,8 @@ export default function PaymentsPage() {
           </Alert>
         ) : null}
 
-        <section className="p-4! md:p-8!">
+        {props.user.is_legal_guardian_information_required ? <Under18WarningAlert /> : null}
+        <section>
           <header>
             <h2>Verification</h2>
           </header>
@@ -1046,6 +1194,8 @@ export default function PaymentsPage() {
                 canadaBusinessTypes={props.canada_business_types}
                 states={props.states}
                 errorFieldNames={errorFieldNames}
+                payoutMethod={selectedPayoutMethod}
+                isLegalGuardianInformationRequired={props.user.is_legal_guardian_information_required}
               />
             ) : (
               <StripeConnectSection
