@@ -1015,18 +1015,6 @@ class User < ApplicationRecord
     end
   end
 
-  def is_legal_guardian_information_required?
-    user_compliance_info = alive_user_compliance_info
-    return false unless user_compliance_info&.birthday
-
-    is_under_18 = user_compliance_info.birthday > 18.years.ago.to_date
-    return false unless is_under_18
-
-    guardian_status = guardian_verification_status
-
-    guardian_status != "verified"
-  end
-
   protected
     def after_confirmation
       # The password reset link sent to the old email should be invalidated
