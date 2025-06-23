@@ -24,7 +24,7 @@ import { ConfirmBalanceForfeitOnPayoutMethodChangeModal } from "$app/components/
 import { CountrySelectionModal } from "$app/components/server-components/CountrySelectionModal";
 import { StripeConnectEmbeddedNotificationBanner } from "$app/components/server-components/PayoutPage/StripeConnectEmbeddedNotificationBanner";
 import { CreditCardForm } from "$app/components/server-components/Settings/CreditCardForm";
-import { Under18WarningAlert } from "$app/components/server-components/Settings/Under18WarningAlert";
+import { LegalGuardianInformationRequiredBanner } from "$app/components/server-components/Settings/LegalGuardianInformationRequiredBanner";
 import { UpdateCountryConfirmationModal } from "$app/components/server-components/UpdateCountryConfirmationModal";
 import { Layout } from "$app/components/Settings/Layout";
 import AccountDetailsSection from "$app/components/Settings/PaymentsPage/AccountDetailsSection";
@@ -63,7 +63,6 @@ export type User = {
   can_connect_stripe: boolean;
   is_charged_paypal_payout_fee: boolean;
   joined_at: string;
-  is_legal_guardian_information_required: boolean;
 };
 
 const PAYOUT_FREQUENCIES = ["daily", "weekly", "monthly", "quarterly"] as const;
@@ -937,7 +936,7 @@ export default function PaymentsPage() {
           </Alert>
         ) : null}
 
-        {props.user.is_legal_guardian_information_required ? <Under18WarningAlert /> : null}
+        <LegalGuardianInformationRequiredBanner />
         <section>
           <header>
             <h2>Verification</h2>
@@ -1195,7 +1194,6 @@ export default function PaymentsPage() {
                 states={props.states}
                 errorFieldNames={errorFieldNames}
                 payoutMethod={selectedPayoutMethod}
-                isLegalGuardianInformationRequired={props.user.is_legal_guardian_information_required}
               />
             ) : (
               <StripeConnectSection
