@@ -438,6 +438,11 @@ textarea {
   }
 }
 
+#marketplace-search::placeholder {
+  color: #000 !important;
+  opacity: 1 !important;
+}
+
 [role="radio"],
 [role="checkbox"] {
   cursor: pointer;
