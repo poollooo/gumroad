@@ -9,17 +9,20 @@
         </div>
         <form action="<%= discover_path %>" method="get" class="relative w-full sm:w-auto">
           <label for="marketplace-search" class="sr-only">Search marketplace</label>
+          <style>#marketplace-search::placeholder { color: var(--placeholder-color) !important; opacity: 1 !important; }</style>
           <input
             id="marketplace-search"
             type="text"
             name="query"
             placeholder="Search marketplace ..."
-            class="px-4 pr-12 border !border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-black focus:border-black w-full sm:w-64 !text-xl !h-14 lg:!h-16"
+            class="px-8 pr-20 rounded-lg focus:outline-none focus:ring-1 focus:ring-black focus:border-black/60 w-full sm:w-64 !text-xl !h-14 lg:!h-16"
+            style="background-color: #f0f0f0 !important; border: 2px solid #C6C6C6 !important; color: #000 !important; --placeholder-color: #000; padding: 0 5rem 0 1rem !important;"
           />
           <button
             type="submit"
             aria-label="Search"
-            class="absolute mr-3 right-0 top-1/2 -translate-y-[55%]"
+            class="bg-white p-2 rounded-md absolute mr-3 right-0 top-1/2 -translate-y-[50%]"
+            style="border: 2px solid #C6C6C6 !important;"
           >
             <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
           </button>
