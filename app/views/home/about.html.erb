@@ -310,9 +310,9 @@
   <div class="flex flex-col gap-16 py-16 lg:py-64 lg:gap-24">
     <div class="flex flex-col justify-center px-8 lg:px-[4vw] gap-10 mx-auto text-center max-w-5xl">
       <h2 class="text-5xl md:text-6xl lg:text-7xl">Unlimited possibilities</h2>
-      <p class="text-lg md:text-2xl lg:text-3xl">Discover the best-selling products and creators on Gumroad</p>
+      <p class="text-xl md:text-2xl lg:text-3xl">Discover the best-selling products and creators on Gumroad</p>
     </div>
-    <div class="flex flex-wrap gap-4 justify-center" role="list">
+    <div class="flex flex-wrap gap-x-4 gap-y-8 justify-center" role="list">
       <% discovery_categories = [
           { path: "3d", icon: "discover/animation.svg", tag: "blender" },
           { path: "audio", icon: "discover/audio.svg", tag: "meditation" },
@@ -327,18 +327,15 @@
           { path: "photography", icon: "discover/photography.svg", tag: "reference photos" },
           { path: "gaming", icon: "discover/games.svg", tag: "vrchat" },
           { path: "films", icon: "discover/film.svg", tag: "after effects" },
-          { path: "self-improvement", icon: "discover/dance.svg", tag: "coloring page" },
-          { path: "software-development", icon: "discover/software.svg", tag: "programming" },
-          { path: "3d", icon: "discover/animation.svg", tag: "3d model" },
-          { path: "audio", icon: "discover/audio.svg", tag: "hypnosis" },
-          { path: "business-and-money", icon: "discover/crafts.svg", tag: "investing" },
-          { path: "comics-and-graphic-novels", icon: "discover/comics.svg", tag: "manga" },
-          { path: "design", icon: "discover/design.svg", tag: "mockup" },
           { path: "drawing-and-painting", icon: "discover/drawing.svg", tag: "brushes" },
           { path: "fiction-books", icon: "discover/writing.svg", tag: "poetry" },
-          { path: "fitness-and-health", icon: "discover/sports.svg", tag: "workout program" },
+          { path: "cooking", icon: "discover/food.svg", tag: "recipes" },
+          { path: "merchandise", icon: "discover/merchandise.svg", tag: "apparel" },
+          { path: "comedy", icon: "discover/comedy.svg", tag: "stand-up" },
+          { path: "self-help", icon: "discover/dance.svg", tag: "mindfulness" },
+          { path: "photography-presets", icon: "discover/photography.svg", tag: "lightroom" },
+          { path: "music-production", icon: "discover/music.svg", tag: "sample pack" },
       ] %>
-
       <% discovery_categories.each_with_index do |category, index| %>
         <div class="<%= index >= 10 ? 'hidden lg:block' : '' %>">
           <%= render "home/shared/discovery_category", **category %>
