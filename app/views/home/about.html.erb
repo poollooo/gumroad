@@ -222,7 +222,7 @@
     </div>
   </div>
 
-  <div class="flex flex-col gap-16 py-16 lg:py-24 lg:gap-24">
+  <div class="flex flex-col gap-16 py-16 lg:py-64 lg:gap-24">
     <div class="flex flex-col justify-center px-8 lg:px-[4vw] gap-10 mx-auto text-center max-w-5xl">
       <h2 class="text-5xl md:text-6xl lg:text-7xl">Unlimited possibilities</h2>
       <p class="text-lg md:text-2xl lg:text-3xl">Discover the best-selling products and creators on Gumroad</p>
@@ -241,7 +241,6 @@
           { path: "fitness-and-health", icon: "discover/sports.svg", tag: "fitness" },
           { path: "photography", icon: "discover/photography.svg", tag: "reference photos" },
           { path: "gaming", icon: "discover/games.svg", tag: "vrchat" },
-          { path: "recorded-music", icon: "discover/music.svg", tag: "singles" },
           { path: "films", icon: "discover/film.svg", tag: "after effects" },
           { path: "self-improvement", icon: "discover/dance.svg", tag: "coloring page" },
           { path: "software-development", icon: "discover/software.svg", tag: "programming" },
@@ -253,12 +252,8 @@
           { path: "design", icon: "discover/design.svg", tag: "mockup" },
           { path: "drawing-and-painting", icon: "discover/drawing.svg", tag: "brushes" },
           { path: "fiction-books", icon: "discover/writing.svg", tag: "poetry" },
-          { path: "films", icon: "discover/film.svg", tag: "vj loops" },
           { path: "education", icon: "discover/education.svg", tag: "certification exams" },
           { path: "fitness-and-health", icon: "discover/sports.svg", tag: "workout program" },
-          { path: "gaming", icon: "discover/games.svg", tag: "avatar" },
-          { path: "music-and-sound-design", icon: "discover/music.svg", tag: "sample pack" },
-          { path: "photography", icon: "discover/photography.svg", tag: "stock photos" },
       ] %>
 
       <% discovery_categories.each do |category| %>
@@ -307,22 +302,6 @@
           <br />
           That's exciting!
         </h3>
-      </div>
-    </div>
-  </div>
-
-  <div class="bg-[#f0f0f0] pt-20 pb-24 px-8 md:pt-24 md:pb-32 md:px-12">
-    <div class="max-w-5xl mx-auto">
-      <div class="flex flex-col items-start space-y-7 text-left md:items-center md:text-center">
-        <h2 class="font-medium text-5xl md:text-6xl lg:text-7xl xl:text-8xl">Make your own road</h2>
-        <p class="text-lg md:text-2xl xl:text-3xl xl:leading-10">Whether you need more balance, flexibility, or just a different gig, we make it easier to chart a new path. You don't have to be a tech expert or even understand how to start a business. You just gotta take what you know and sell it.</p>
-        <a href="/features" class="group inline-flex items-center text-xl font-bold no-underline relative">
-          <span class="inline-flex items-center gap-2 relative">
-            Explore Features
-            <span>→</span>
-            <span class="absolute -bottom-1 left-0 w-full h-[0.1em] bg-black transform scale-x-0 transition-transform origin-left group-hover:scale-x-100"></span>
-          </span>
-        </a>
       </div>
     </div>
   </div>
@@ -426,14 +405,15 @@
     </div>
   </div>
 
-  <%= image_tag "about/new-sale.svg", alt: "New sale illustration", class: "w-full min-h-[300px] object-cover" %>
-
-  <div class="border-t border-black bg-pink px-8 py-16 lg:px-[4vw] lg:py-24">
-    <div class="flex flex-col gap-8 max-w-5xl mx-auto lg:items-center">
-      <h1 class="font-medium text-center text-4xl sm:text-5xl lg:text-7xl"> Share your work. <br> Someone out there needs it.</h1>
+  <div class="border-t border-black px-8 py-16 lg:px-[4vw] lg:py-24">
+    <div class="flex flex-row gap-8 lg:gap-16 max-w-5xl mx-auto lg:items-center">
+      <h1 class="font-medium text-4xl sm:text-5xl lg:text-6xl"> Share your work. <br> Someone out there needs it.</h1>
       <%= render "home/shared/button", text: "Start selling", url: new_user_registration_path %>
     </div>
   </div>
+
+  <%= image_tag "about/new-sale.svg", alt: "New sale illustration", class: "w-full min-h-[300px] object-cover" %>
+
 
   <%= render "home/shared/footer" %>
 
