@@ -343,7 +343,6 @@
           { path: "films", icon: "discover/film.svg", tag: "after effects" },
           { path: "self-improvement", icon: "discover/dance.svg", tag: "coloring page" },
           { path: "software-development", icon: "discover/software.svg", tag: "programming" },
-          { path: "writing-and-publishing", icon: "discover/writing.svg", tag: "kdp interior" },
           { path: "3d", icon: "discover/animation.svg", tag: "3d model" },
           { path: "audio", icon: "discover/audio.svg", tag: "hypnosis" },
           { path: "business-and-money", icon: "discover/crafts.svg", tag: "investing" },
@@ -351,12 +350,13 @@
           { path: "design", icon: "discover/design.svg", tag: "mockup" },
           { path: "drawing-and-painting", icon: "discover/drawing.svg", tag: "brushes" },
           { path: "fiction-books", icon: "discover/writing.svg", tag: "poetry" },
-          { path: "education", icon: "discover/education.svg", tag: "certification exams" },
           { path: "fitness-and-health", icon: "discover/sports.svg", tag: "workout program" },
       ] %>
 
-      <% discovery_categories.each do |category| %>
-        <%= render "home/shared/discovery_category", **category %>
+      <% discovery_categories.each_with_index do |category, index| %>
+        <div class="<%= index >= 10 ? 'hidden lg:block' : '' %>">
+          <%= render "home/shared/discovery_category", **category %>
+        </div>
       <% end %>
     </div>
   </div>
