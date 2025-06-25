@@ -220,90 +220,36 @@
   </div>
 
   <div class="grid override grid-cols-1 lg:grid-cols-2 bg-light-gray max-w-6xl mx-auto px-4 gap-x-8 gap-y-12">
-    <div class="space-y-6">
-      <div class="bg-white border-0 px-8 py-4 relative rounded-tl-3xl rounded-tr-3xl rounded-br-3xl rounded-bl-sm">
-        <div class="mb-4">
-          <%= image_tag "icons/quote-squared.svg", alt: "Quote squared", class: "w-5 h-3" %>
-        </div>
-        <p class="text-black text-xl leading-relaxed font-medium">
-          I launched MaxPacks as an experimental side gig; but within 2 years those Procreate brushes were earning more than my 6-figure salary in CG. Leaving in favor of Gumroad enabled me to explore other aspects of my art, develop new hobbies, and finally prioritize my personal life.
-        </p>
-      </div>
-      <div class="flex items-center gap-4 pl-2">
-        <div class="rounded-full p-1">
-          <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden">
-            <%= image_tag "creators/max-full.png", alt: "Max Ulichney", class: "w-full h-full object-cover rounded-full" %>
-          </div>
-        </div>
-        <div>
-          <h3 class="font-bold text-black text-lg">Max Ulichney</h3>
-          <p class="text-black text-sm">Sells Procreate brush packs</p>
-        </div>
-      </div>
-    </div>
-    <div class="space-y-6">
-      <div class="bg-white border-0 rounded-3xl px-8 py-4 relative rounded-tl-3xl rounded-tr-3xl rounded-br-3xl rounded-bl-sm">
-        <div class="mb-4">
-          <%= image_tag "icons/quote-squared.svg", alt: "Quote squared", class: "w-5 h-3" %>
-        </div>
-        <p class="text-black text-xl leading-relaxed font-medium">
-          For years, I had a goal to develop 'passive' income streams, but struggled to make that a reality. Last year, I started selling informational products on Gumroad and since then have made $10k+ per month building products that I love.
-        </p>
-      </div>
-      <div class="flex items-center gap-4 pl-2">
-        <div class="rounded-full p-1">
-          <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden">
-            <%= image_tag "creators/steph-full.png", alt: "Steph Smith", class: "w-full h-full object-cover rounded-full" %>
-          </div>
-        </div>
-        <div>
-          <h3 class="font-bold text-black text-lg">Steph Smith</h3>
-          <p class="text-black text-sm">Sells content tutorials</p>
-        </div>
-      </div>
-    </div>
-    <div class="space-y-6">
-      <div class="bg-white border-0 rounded-3xl px-8 py-4 relative rounded-tl-3xl rounded-tr-3xl rounded-br-3xl rounded-bl-sm">
-        <div class="mb-4">
-          <%= image_tag "icons/quote-squared.svg", alt: "Quote squared", class: "w-5 h-3" %>
-        </div>
-        <p class="text-black text-xl leading-relaxed font-medium">
-          Originally, I took pre-orders for my Trend Reports on Gumroad. But I received... exactly $0. So I changed tactics: I made half of my report free, and the other half paid. Today, 99% of Trends.VC revenue is recurring in the form of annual and quarterly subscriptions.
-        </p>
-      </div>
-      <div class="flex items-center gap-4 pl-2">
-        <div class="rounded-full p-1">
-          <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden">
-            <%= image_tag "creators/dru-full.png", alt: "trendsvc", class: "w-full h-full object-cover rounded-full" %>
-          </div>
-        </div>
-        <div>
-          <h3 class="font-bold text-black text-lg">trendsvc</h3>
-          <p class="text-black text-sm">Sells business insights and expertise</p>
-        </div>
-      </div>
-    </div>
-    <div class="space-y-6">
-      <div class="bg-white border-0 rounded-3xl px-8 py-4 relative rounded-tl-3xl rounded-tr-3xl rounded-br-3xl rounded-bl-sm">
-        <div class="mb-4">
-          <%= image_tag "icons/quote-squared.svg", alt: "Quote squared", class: "w-5 h-3" %>
-        </div>
-        <p class="text-black text-xl leading-relaxed font-medium">
-          I love Gumroad because it can't be any simpler. I upload a file, set a price, and I can start selling on the internet. The money I make from my sales lands directly in my bank account every Friday.
-        </p>
-      </div>
-      <div class="flex items-center gap-4 pl-2">
-        <div class="rounded-full p-1">
-          <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center overflow-hidden">
-            <%= image_tag "creators/daniel-full.png", alt: "Daniel Vassallo", class: "w-full h-full object-cover rounded-full" %>
-          </div>
-        </div>
-        <div>
-          <h3 class="font-bold text-black text-lg">Daniel Vassallo</h3>
-          <p class="text-black text-sm">Sells business insights and expertise</p>
-        </div>
-      </div>
-    </div>
+    <% testimonials = [
+      {
+        quote: "I launched MaxPacks as an experimental side gig; but within 2 years those Procreate brushes were earning more than my 6-figure salary in CG. Leaving in favor of Gumroad enabled me to explore other aspects of my art, develop new hobbies, and finally prioritize my personal life.",
+        avatar_path: "creators/max-full.png",
+        name: "Max Ulichney",
+        description: "Sells Procreate brush packs"
+      },
+      {
+        quote: "For years, I had a goal to develop 'passive' income streams, but struggled to make that a reality. Last year, I started selling informational products on Gumroad and since then have made $10k+ per month building products that I love.",
+        avatar_path: "creators/steph-full.png",
+        name: "Steph Smith",
+        description: "Sells content tutorials"
+      },
+      {
+        quote: "Originally, I took pre-orders for my Trend Reports on Gumroad. But I received... exactly $0. So I changed tactics: I made half of my report free, and the other half paid. Today, 99% of Trends.VC revenue is recurring in the form of annual and quarterly subscriptions.",
+        avatar_path: "creators/dru-full.png",
+        name: "trendsvc",
+        description: "Sells business insights and expertise"
+      },
+      {
+        quote: "I love Gumroad because it can't be any simpler. I upload a file, set a price, and I can start selling on the internet. The money I make from my sales lands directly in my bank account every Friday.",
+        avatar_path: "creators/daniel-full.png",
+        name: "Daniel Vassallo",
+        description: "Sells business insights and expertise"
+      }
+    ] %>
+
+    <% testimonials.each do |testimonial| %>
+      <%= render "home/shared/testimonial", testimonial %>
+    <% end %>
   </div>
 
   <div class="flex flex-col gap-16 py-16 lg:py-64 lg:gap-24">
