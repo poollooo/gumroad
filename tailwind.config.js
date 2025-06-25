@@ -68,6 +68,7 @@ export default {
         violet: "#b23386",
         gray: "#f4f4f0",
         "dark-gray": "#242423",
+        "light-gray": "#f0f0f0",
       },
       boxShadow: {
         DEFAULT: "0.25rem 0.25rem 0 currentColor",
