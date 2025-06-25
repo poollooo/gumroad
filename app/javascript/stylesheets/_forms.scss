@@ -438,9 +438,11 @@ textarea {
   }
 }
 
-#marketplace-search::placeholder {
-  color: #000 !important;
-  opacity: 1 !important;
+#marketplace-search {
+  &::placeholder {
+    color: var(--placeholder-color, #000);
+    opacity: 1;
+  }
 }
 
 [role="radio"],
