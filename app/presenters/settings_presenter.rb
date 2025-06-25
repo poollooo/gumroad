@@ -274,11 +274,10 @@ class SettingsPresenter
                                              Compliance::Countries::PAK.alpha2],
         individual_tax_id_entered: user_compliance_info.individual_tax_id.present?,
         business_tax_id_entered: user_compliance_info.business_tax_id.present?,
-        guardian_individual_tax_id_entered: user_compliance_info.guardian_individual_tax_id.present?,
         requires_credit_card: seller.requires_credit_card?,
         can_connect_stripe: seller.can_connect_stripe?,
         is_charged_paypal_payout_fee: seller.charge_paypal_payout_fee?,
-        joined_at: seller.created_at.iso8601,
+        joined_at: seller.created_at.iso8601
       }
     end
 
@@ -318,18 +317,6 @@ class SettingsPresenter
         dob_month: user_compliance_info.birthday.try(:month).to_i,
         dob_day: user_compliance_info.birthday.try(:day).to_i,
         dob_year: user_compliance_info.birthday.try(:year).to_i,
-        guardian_first_name: user_compliance_info.guardian_first_name,
-        guardian_last_name: user_compliance_info.guardian_last_name,
-        guardian_email: user_compliance_info.guardian_email,
-        guardian_phone: user_compliance_info.guardian_phone,
-        guardian_street_address: user_compliance_info.guardian_street_address,
-        guardian_city: user_compliance_info.guardian_city,
-        guardian_state: user_compliance_info.guardian_state,
-        guardian_country: user_compliance_info.guardian_country_code || user_compliance_info.country_code,
-        guardian_zip_code: user_compliance_info.guardian_zip_code,
-        guardian_dob_month: user_compliance_info.guardian_birthday.try(:month).to_i,
-        guardian_dob_day: user_compliance_info.guardian_birthday.try(:day).to_i,
-        guardian_dob_year: user_compliance_info.guardian_birthday.try(:year).to_i,
       }
     end
 
