@@ -41,7 +41,7 @@
         <div class="hero-coin absolute z-[1] w-[8rem] invisible md:visible sm:w-[8rem] sm:top-[20rem] sm:right-[-3rem] md:w-[10rem] md:top-[58rem] md:right-[15rem] lg:w-[12rem] lg:top-[55rem]" data-parallax-intensity="0.03" data-scroll-intensity="-0.20">
           <%= image_tag "about/coin-1.svg", loading: "lazy", alt: "Decorative coin 1", class: "w-full h-auto" %>
         </div>
-        <div class="hero-coin absolute z-[1] w-[10rem] top-[28rem] left-[-12vw] sm:left-[-7vw] md:w-[11rem] md:top-[30rem] md:left-[8vw]" data-parallax-intensity="-0.02" data-scroll-intensity="-0.15">
+        <div class="hero-coin absolute z-[1] w-[10rem] top-[28rem] left-[-12vw] sm:left-[-7vw] md:left-[3vw] md:w-[11rem] md:top-[30rem]" data-parallax-intensity="-0.02" data-scroll-intensity="-0.15">
           <%= image_tag "about/coin-2.svg", loading: "lazy", alt: "Decorative coin 2", class: "w-full h-auto" %>
         </div>
         <div class="hero-coin absolute z-[1] w-[9rem] right-[-3vw] top-[-7rem] invisible sm:visible md:w-[8rem] md:top-[26rem] md:right-[6vw]" data-parallax-intensity="0.05" data-scroll-intensity="-0.18">
@@ -312,7 +312,7 @@
       <h2 class="text-5xl md:text-6xl lg:text-7xl">Unlimited possibilities</h2>
       <p class="text-xl md:text-2xl lg:text-3xl">Discover the best-selling products and creators on Gumroad</p>
     </div>
-    <div class="flex flex-wrap gap-x-4 gap-y-8 justify-center" role="list">
+    <div class="flex flex-wrap gap-x-4 gap-y-6 justify-center" role="list">
       <% discovery_categories = [
           { path: "3d", icon: "discover/animation.svg", tag: "blender" },
           { path: "audio", icon: "discover/audio.svg", tag: "meditation" },
@@ -320,21 +320,18 @@
           { path: "comics-and-graphic-novels", icon: "discover/comics.svg", tag: "comic" },
           { path: "design", icon: "discover/design.svg", tag: "textures" },
           { path: "drawing-and-painting", icon: "discover/drawing.svg", tag: "procreate" },
-          { path: "education", icon: "discover/education.svg", tag: "education" },
-          { path: "music-and-sound-design", icon: "discover/music.svg", tag: "ableton" },
           { path: "fiction-books", icon: "discover/writing.svg", tag: "sci-fi" },
+          { path: "education", icon: "discover/education.svg", tag: "education" },
           { path: "fitness-and-health", icon: "discover/sports.svg", tag: "fitness" },
           { path: "photography", icon: "discover/photography.svg", tag: "reference photos" },
+          { path: "comedy", icon: "discover/comedy.svg", tag: "stand-up" },
           { path: "gaming", icon: "discover/games.svg", tag: "vrchat" },
           { path: "films", icon: "discover/film.svg", tag: "after effects" },
           { path: "drawing-and-painting", icon: "discover/drawing.svg", tag: "brushes" },
-          { path: "fiction-books", icon: "discover/writing.svg", tag: "poetry" },
           { path: "cooking", icon: "discover/food.svg", tag: "recipes" },
-          { path: "merchandise", icon: "discover/merchandise.svg", tag: "apparel" },
-          { path: "comedy", icon: "discover/comedy.svg", tag: "stand-up" },
-          { path: "self-help", icon: "discover/dance.svg", tag: "mindfulness" },
-          { path: "photography-presets", icon: "discover/photography.svg", tag: "lightroom" },
+          { path: "fiction-books", icon: "discover/writing.svg", tag: "poetry" },
           { path: "music-production", icon: "discover/music.svg", tag: "sample pack" },
+          { path: "merchandise", icon: "discover/merchandise.svg", tag: "apparel" },
       ] %>
       <% discovery_categories.each_with_index do |category, index| %>
         <div class="<%= index >= 10 ? 'hidden lg:block' : '' %>">
