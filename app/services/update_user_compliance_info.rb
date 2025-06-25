@@ -74,23 +74,4 @@ class UpdateUserComplianceInfo
 
     { success: true }
   end
-
-  private
-
-  def filter_sensitive_params(params)
-    filtered = params.dup
-    sensitive_keys = [:individual_tax_id, :business_tax_id, :guardian_individual_tax_id, :ssn_last_four, :guardian_ssn_last_four]
-
-    sensitive_keys.each do |key|
-      filtered[key] = "[FILTERED]" if filtered[key].present?
-    end
-
-    filtered
-  end
-
-  def user_under_18?(user_compliance_info)
-    return false unless user_compliance_info&.birthday
-
-    user_compliance_info.birthday > 18.years.ago
-  end
 end
