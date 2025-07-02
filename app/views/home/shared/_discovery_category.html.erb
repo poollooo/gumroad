@@ -1,119 +1,96 @@
-<!-- First row: blender to brushes (moving left) -->
-<div class="w-full mb-0 md:mb-2">
-  <div class="flex w-[200%] animate-[marquee-left_10s_linear_infinite] md:animate-[marquee-left_30s_linear_infinite]">
-    <% first_row_tags = [
-      {tag: "blender", path: "3d"},
-      {tag: "3d model", path: "3d"},
-      {tag: "spark ar", path: "3d"},
-      {tag: "meditation", path: "audio"},
-      {tag: "hypnosis", path: "audio"},
-      {tag: "subliminal messages", path: "audio"},
-      {tag: "notion template", path: "business-and-money"},
-      {tag: "investing", path: "business-and-money"},
-      {tag: "instagram", path: "business-and-money"},
-      {tag: "comic", path: "comics-and-graphic-novels"},
-      {tag: "manga", path: "comics-and-graphic-novels"},
-      {tag: "anime", path: "comics-and-graphic-novels"},
-      {tag: "textures", path: "design"},
-      {tag: "mockup", path: "design"},
-      {tag: "font", path: "design"},
-      {tag: "procreate", path: "drawing-and-painting"},
-      {tag: "brushes", path: "drawing-and-painting"}
-    ] %>
-    <% first_row_icons = ["discover/animation.svg", "discover/design.svg", "discover/crafts.svg", "discover/audio.svg", "discover/comics.svg", "discover/drawing.svg", "discover/education.svg", "discover/film.svg", "discover/sports.svg", "discover/games.svg", "discover/music.svg", "discover/photography.svg", "discover/dance.svg", "discover/software.svg", "discover/writing.svg", "discover/sports.svg", "discover/crafts.svg"] %>
-    <% (first_row_tags * 2).each_with_index do |tag_obj, index| %>
-      <div class="flex-shrink-0 mr-3 flex gap-3 justify-center items-center h-auto">
-        <%= image_tag first_row_icons[index % first_row_icons.length],
-            alt: "#{tag_obj[:tag]} icon",
-            loading: "lazy",
-            class: "w-12 h-auto md:w-20 flex-shrink-0" %>
-        <%= link_to(
-          tag_obj[:tag],
-          discover_taxonomy_url(tag_obj[:path], tags: tag_obj[:tag], host: DISCOVER_DOMAIN),
-          class: "px-4 py-2 bg-white rounded-full text-lg md:text-2xl font-medium text-black border border-gray-300 no-underline hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0_0_#000000] transition-all whitespace-nowrap"
-        ) %>
-      </div>
-    <% end %>
-  </div>
-</div>
+<%
+  discovery_rows = [
+    {
+      animation: "marquee-left",
+      tags: [
+        {tag: "blender", path: "3d"},
+        {tag: "3d model", path: "3d"},
+        {tag: "spark ar", path: "3d"},
+        {tag: "meditation", path: "audio"},
+        {tag: "hypnosis", path: "audio"},
+        {tag: "subliminal messages", path: "audio"},
+        {tag: "notion template", path: "business-and-money"},
+        {tag: "investing", path: "business-and-money"},
+        {tag: "instagram", path: "business-and-money"},
+        {tag: "comic", path: "comics-and-graphic-novels"},
+        {tag: "manga", path: "comics-and-graphic-novels"},
+        {tag: "anime", path: "comics-and-graphic-novels"},
+        {tag: "textures", path: "design"},
+        {tag: "mockup", path: "design"},
+        {tag: "font", path: "design"},
+        {tag: "procreate", path: "drawing-and-painting"},
+        {tag: "brushes", path: "drawing-and-painting"}
+      ],
+      icons: ["discover/animation.svg", "discover/design.svg", "discover/crafts.svg", "discover/audio.svg", "discover/comics.svg", "discover/drawing.svg", "discover/education.svg", "discover/film.svg", "discover/sports.svg", "discover/games.svg", "discover/music.svg", "discover/photography.svg", "discover/dance.svg", "discover/software.svg", "discover/writing.svg", "discover/sports.svg", "discover/crafts.svg"]
+    },
+    {
+      animation: "marquee-right",
+      tags: [
+        {tag: "art", path: "drawing-and-painting"},
+        {tag: "education", path: "education"},
+        {tag: "certification exams", path: "education"},
+        {tag: "learning", path: "education"},
+        {tag: "sci-fi", path: "fiction-books"},
+        {tag: "poetry", path: "fiction-books"},
+        {tag: "fiction", path: "fiction-books"},
+        {tag: "after effects", path: "films"},
+        {tag: "vj loops", path: "films"},
+        {tag: "luts", path: "films"},
+        {tag: "fitness", path: "fitness-and-health"},
+        {tag: "workout program", path: "fitness-and-health"},
+        {tag: "yoga", path: "fitness-and-health"},
+        {tag: "vrchat", path: "gaming"},
+        {tag: "avatar", path: "gaming"},
+        {tag: "assets", path: "gaming"},
+        {tag: "ableton", path: "music-and-sound-design"},
+        {tag: "sample pack", path: "music-and-sound-design"},
+        {tag: "sheet music", path: "music-and-sound-design"}
+      ],
+      icons: ["discover/drawing.svg", "discover/education.svg", "discover/writing.svg", "discover/film.svg", "discover/sports.svg", "discover/music.svg", "discover/games.svg", "discover/animation.svg", "discover/audio.svg", "discover/design.svg", "discover/crafts.svg", "discover/photography.svg", "discover/dance.svg", "discover/comics.svg", "discover/software.svg", "discover/education.svg", "discover/drawing.svg", "discover/film.svg", "discover/sports.svg"]
+    },
+    {
+      animation: "marquee-left",
+      tags: [
+        {tag: "reference photos", path: "photography"},
+        {tag: "stock photos", path: "photography"},
+        {tag: "photobash", path: "photography"},
+        {tag: "singles", path: "recorded-music"},
+        {tag: "jazz", path: "recorded-music"},
+        {tag: "instrumental music", path: "recorded-music"},
+        {tag: "coloring page", path: "self-improvement"},
+        {tag: "printable", path: "self-improvement"},
+        {tag: "productivity", path: "self-improvement"},
+        {tag: "programming", path: "software-development"},
+        {tag: "windows", path: "software-development"},
+        {tag: "theme", path: "software-development"},
+        {tag: "kdp interior", path: "writing-and-publishing"},
+        {tag: "ebook", path: "writing-and-publishing"},
+        {tag: "low content books", path: "writing-and-publishing"}
+      ],
+      icons: ["discover/photography.svg", "discover/design.svg", "discover/crafts.svg", "discover/music.svg", "discover/audio.svg", "discover/animation.svg", "discover/drawing.svg", "discover/software.svg", "discover/education.svg", "discover/comics.svg", "discover/film.svg", "discover/sports.svg", "discover/writing.svg", "discover/games.svg", "discover/dance.svg"]
+    }
+  ]
+%>
 
-<!-- Second row: art to sheet music (moving right) -->
-<div class="w-full mb-0 md:mb-2">
-  <div class="flex w-[200%] animate-[marquee-right_10s_linear_infinite] md:animate-[marquee-right_30s_linear_infinite]">
-    <% second_row_tags = [
-      {tag: "art", path: "drawing-and-painting"},
-      {tag: "education", path: "education"},
-      {tag: "certification exams", path: "education"},
-      {tag: "learning", path: "education"},
-      {tag: "sci-fi", path: "fiction-books"},
-      {tag: "poetry", path: "fiction-books"},
-      {tag: "fiction", path: "fiction-books"},
-      {tag: "after effects", path: "films"},
-      {tag: "vj loops", path: "films"},
-      {tag: "luts", path: "films"},
-      {tag: "fitness", path: "fitness-and-health"},
-      {tag: "workout program", path: "fitness-and-health"},
-      {tag: "yoga", path: "fitness-and-health"},
-      {tag: "vrchat", path: "gaming"},
-      {tag: "avatar", path: "gaming"},
-      {tag: "assets", path: "gaming"},
-      {tag: "ableton", path: "music-and-sound-design"},
-      {tag: "sample pack", path: "music-and-sound-design"},
-      {tag: "sheet music", path: "music-and-sound-design"}
-    ] %>
-    <% second_row_icons = ["discover/drawing.svg", "discover/education.svg", "discover/writing.svg", "discover/film.svg", "discover/sports.svg", "discover/music.svg", "discover/games.svg", "discover/animation.svg", "discover/audio.svg", "discover/design.svg", "discover/crafts.svg", "discover/photography.svg", "discover/dance.svg", "discover/comics.svg", "discover/software.svg", "discover/education.svg", "discover/drawing.svg", "discover/film.svg", "discover/sports.svg"] %>
-    <% (second_row_tags * 2).each_with_index do |tag_obj, index| %>
-      <div class="flex-shrink-0 mr-3 flex gap-3 justify-center items-center h-auto">
-        <%= image_tag second_row_icons[index % second_row_icons.length],
-            alt: "#{tag_obj[:tag]} icon",
-            loading: "lazy",
-            class: "w-12 h-auto md:w-20 flex-shrink-0" %>
-        <%= link_to(
-          tag_obj[:tag],
-          discover_taxonomy_url(tag_obj[:path], tags: tag_obj[:tag], host: DISCOVER_DOMAIN),
-          class: "px-4 py-2 bg-white rounded-full text-lg md:text-2xl font-medium text-black border border-gray-300 no-underline hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0_0_#000000] transition-all whitespace-nowrap"
-        ) %>
-      </div>
-    <% end %>
+<% discovery_rows.each_with_index do |row, row_index| %>
+  <div class="w-full <%= row_index < discovery_rows.length - 1 ? 'mb-0 md:mb-2' : '' %>">
+    <div class="flex w-[200%] animate-[<%= row[:animation] %>_10s_linear_infinite] md:animate-[<%= row[:animation] %>_30s_linear_infinite]">
+      <% (row[:tags] * 2).each_with_index do |tag_obj, index| %>
+        <div class="flex-shrink-0 mr-3 flex gap-3 justify-center items-center h-auto">
+          <%= image_tag row[:icons][index % row[:icons].length],
+              alt: "#{tag_obj[:tag]} icon",
+              loading: "lazy",
+              class: "w-12 h-auto md:w-20 flex-shrink-0" %>
+          <%= link_to(
+            tag_obj[:tag],
+            discover_taxonomy_url(tag_obj[:path], tags: tag_obj[:tag], host: DISCOVER_DOMAIN),
+            class: "px-4 py-2 bg-white rounded-full text-lg md:text-2xl font-medium text-black border border-gray-300 no-underline hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0_0_#000000] transition-all whitespace-nowrap"
+          ) %>
+        </div>
+      <% end %>
+    </div>
   </div>
-</div>
-
-<!-- Third row: reference photos to low content books (moving left) -->
-<div class="w-full">
-  <div class="flex w-[200%] animate-[marquee-left_10s_linear_infinite] md:animate-[marquee-left_30s_linear_infinite]">
-    <% third_row_tags = [
-      {tag: "reference photos", path: "photography"},
-      {tag: "stock photos", path: "photography"},
-      {tag: "photobash", path: "photography"},
-      {tag: "singles", path: "recorded-music"},
-      {tag: "jazz", path: "recorded-music"},
-      {tag: "instrumental music", path: "recorded-music"},
-      {tag: "coloring page", path: "self-improvement"},
-      {tag: "printable", path: "self-improvement"},
-      {tag: "productivity", path: "self-improvement"},
-      {tag: "programming", path: "software-development"},
-      {tag: "windows", path: "software-development"},
-      {tag: "theme", path: "software-development"},
-      {tag: "kdp interior", path: "writing-and-publishing"},
-      {tag: "ebook", path: "writing-and-publishing"},
-      {tag: "low content books", path: "writing-and-publishing"}
-    ] %>
-    <% third_row_icons = ["discover/photography.svg", "discover/design.svg", "discover/crafts.svg", "discover/music.svg", "discover/audio.svg", "discover/animation.svg", "discover/drawing.svg", "discover/software.svg", "discover/education.svg", "discover/comics.svg", "discover/film.svg", "discover/sports.svg", "discover/writing.svg", "discover/games.svg", "discover/dance.svg"] %>
-    <% (third_row_tags * 2).each_with_index do |tag_obj, index| %>
-      <div class="flex-shrink-0 mr-3 flex gap-3 justify-center items-center h-auto">
-        <%= image_tag third_row_icons[index % third_row_icons.length],
-            alt: "#{tag_obj[:tag]} icon",
-            loading: "lazy",
-            class: "w-12 h-auto md:w-20 flex-shrink-0" %>
-        <%= link_to(
-          tag_obj[:tag],
-          discover_taxonomy_url(tag_obj[:path], tags: tag_obj[:tag], host: DISCOVER_DOMAIN),
-          class: "px-4 py-2 bg-white rounded-full text-lg md:text-2xl font-medium text-black border border-gray-300 no-underline hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0_0_#000000] transition-all whitespace-nowrap"
-        ) %>
-      </div>
-    <% end %>
-  </div>
-</div>
+<% end %>
 
 <style>
   @keyframes marquee-left {
