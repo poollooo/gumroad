@@ -27,9 +27,11 @@
             alt: "#{tag_obj[:tag]} icon",
             loading: "lazy",
             class: "w-10 h-auto md:w-20 flex-shrink-0" %>
-        <%= link_to "/#{tag_obj[:path]}?tags=#{tag_obj[:tag]}", class: "px-4 py-2 bg-white rounded-full text-lg md:text-2xl font-medium text-black border border-gray-300 no-underline hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0_0_#000000] transition-all whitespace-nowrap" do %>
-          <%= tag_obj[:tag] %>
-        <% end %>
+        <%= link_to(
+          tag_obj[:tag],
+          discover_taxonomy_url(tag_obj[:path], tags: tag_obj[:tag], host: DISCOVER_DOMAIN),
+          class: "px-4 py-2 bg-white rounded-full text-lg md:text-2xl font-medium text-black border border-gray-300 no-underline hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0_0_#000000] transition-all whitespace-nowrap"
+        ) %>
       </div>
     <% end %>
   </div>
@@ -66,9 +68,11 @@
             alt: "#{tag_obj[:tag]} icon",
             loading: "lazy",
             class: "w-10 h-auto md:w-20 flex-shrink-0" %>
-        <%= link_to "/#{tag_obj[:path]}?tags=#{tag_obj[:tag]}", class: "px-4 py-2 bg-white rounded-full text-lg md:text-2xl font-medium text-black border border-gray-300 no-underline hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0_0_#000000] transition-all whitespace-nowrap" do %>
-          <%= tag_obj[:tag] %>
-        <% end %>
+        <%= link_to(
+          tag_obj[:tag],
+          discover_taxonomy_url(tag_obj[:path], tags: tag_obj[:tag], host: DISCOVER_DOMAIN),
+          class: "px-4 py-2 bg-white rounded-full text-lg md:text-2xl font-medium text-black border border-gray-300 no-underline hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0_0_#000000] transition-all whitespace-nowrap"
+        ) %>
       </div>
     <% end %>
   </div>
@@ -101,9 +105,11 @@
             alt: "#{tag_obj[:tag]} icon",
             loading: "lazy",
             class: "w-10 h-auto md:w-20 flex-shrink-0" %>
-        <%= link_to "/#{tag_obj[:path]}?tags=#{tag_obj[:tag]}", class: "px-4 py-2 bg-white rounded-full text-lg md:text-2xl font-medium text-black border border-gray-300 no-underline hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0_0_#000000] transition-all whitespace-nowrap" do %>
-          <%= tag_obj[:tag] %>
-        <% end %>
+        <%= link_to(
+          tag_obj[:tag],
+          discover_taxonomy_url(tag_obj[:path], tags: tag_obj[:tag], host: DISCOVER_DOMAIN),
+          class: "px-4 py-2 bg-white rounded-full text-lg md:text-2xl font-medium text-black border border-gray-300 no-underline hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0_0_#000000] transition-all whitespace-nowrap"
+        ) %>
       </div>
     <% end %>
   </div>
