@@ -26,7 +26,7 @@
         <%= image_tag first_row_icons[index % first_row_icons.length],
             alt: "#{tag_obj[:tag]} icon",
             loading: "lazy",
-            class: "w-10 h-auto md:w-20 flex-shrink-0" %>
+            class: "w-12 h-auto md:w-20 flex-shrink-0" %>
         <%= link_to(
           tag_obj[:tag],
           discover_taxonomy_url(tag_obj[:path], tags: tag_obj[:tag], host: DISCOVER_DOMAIN),
@@ -67,7 +67,7 @@
         <%= image_tag second_row_icons[index % second_row_icons.length],
             alt: "#{tag_obj[:tag]} icon",
             loading: "lazy",
-            class: "w-10 h-auto md:w-20 flex-shrink-0" %>
+            class: "w-12 h-auto md:w-20 flex-shrink-0" %>
         <%= link_to(
           tag_obj[:tag],
           discover_taxonomy_url(tag_obj[:path], tags: tag_obj[:tag], host: DISCOVER_DOMAIN),
@@ -104,7 +104,7 @@
         <%= image_tag third_row_icons[index % third_row_icons.length],
             alt: "#{tag_obj[:tag]} icon",
             loading: "lazy",
-            class: "w-10 h-auto md:w-20 flex-shrink-0" %>
+            class: "w-12 h-auto md:w-20 flex-shrink-0" %>
         <%= link_to(
           tag_obj[:tag],
           discover_taxonomy_url(tag_obj[:path], tags: tag_obj[:tag], host: DISCOVER_DOMAIN),
