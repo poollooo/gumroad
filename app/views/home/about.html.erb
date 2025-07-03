@@ -250,7 +250,7 @@
     ] %>
 
     <% testimonials.each do |testimonial| %>
-      <%= render "home/shared/testimonial", testimonial %>
+      <%= render "home/shared/testimonial", **testimonial %>
     <% end %>
   </div>
 
