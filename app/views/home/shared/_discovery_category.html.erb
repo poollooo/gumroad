@@ -69,9 +69,9 @@
   ]
 %>
 
-<% discovery_rows.each_with_index do |row, row_index| %>
-  <div class="w-full <%= row_index < discovery_rows.length - 1 ? 'mb-0 md:mb-2' : '' %>">
-    <div class="flex w-[200%] animate-[<%= row[:animation] %>_10s_linear_infinite] md:animate-[<%= row[:animation] %>_30s_linear_infinite]">
+<div class="group flex flex-wrap gap-x-4 gap-y-6 justify-center" role="list">
+  <% discovery_rows.each do |row| %>
+    <div class="flex w-[200%] group-hover:[animation-play-state:paused] motion-safe:animate-[marquee_20s_linear_infinite] motion-safe:md:animate-[marquee_60s_linear_infinite] motion-reduce:animate-none">
       <% (row[:tags] * 2).each_with_index do |tag_obj, index| %>
         <div class="flex-shrink-0 mr-3 flex gap-3 justify-center items-center h-auto">
           <%= image_tag tag_obj[:icon],
@@ -81,22 +81,18 @@
           <%= link_to(
             tag_obj[:tag],
             discover_taxonomy_url(tag_obj[:path], tags: tag_obj[:tag], host: DISCOVER_DOMAIN),
-            class: "px-4 py-2 bg-white rounded-full text-lg md:text-2xl font-medium text-black border border-gray-300 no-underline hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0_0_#000000] transition-all whitespace-nowrap"
+            class: "px-4 py-2 bg-white rounded-full text-lg md:text-2xl font-medium text-black border border-gray-300 no-underline motion-safe:hover:-translate-x-1 motion-safe:hover:-translate-y-1 hover:shadow-[4px_4px_0_0_#000000] transition-all whitespace-nowrap"
           ) %>
         </div>
       <% end %>
     </div>
-  </div>
-<% end %>
+  <% end %>
+</div>
 
 <style>
-  @keyframes marquee-left {
+  @keyframes marquee {
     0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-
-  @keyframes marquee-right {
-    0% { transform: translateX(-50%); }
+    50% { transform: translateX(-50%); }
     100% { transform: translateX(0); }
   }
 </style>
