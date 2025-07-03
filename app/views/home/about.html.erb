@@ -89,18 +89,20 @@
       <div class="overflow-hidden flex flex-col justify-between bg-white border border-gray-300 rounded-3xl p-8 lg:basis-1/3 h-auto md:h-[30rem]">
         <p class="text-4xl mb-8 md:mb-0 text-balance">Sell to anyone</p>
         <div class="flex flex-col gap-4">
-          <div class="flex items-start gap-4">
-            <%= icon "outline-check-circle-about", class: "!w-6" %>
-            <p class="w-[14rem] text-lg">Go from 0 to $1 and automated workflows.</p>
+          <% [
+            "Go from 0 to $1 and automated workflows.",
+            "Let your customers pay in their own currency.",
+            "Choose between one-time, recurring, or fixed-length payments in your currency of choice."
+          ].each do |text| %>
+          <div class="flex gap-4">
+            <div class="h-7 flex-none flex items-center justify-center">
+              <%= image_tag "icons/outline-check-circle-about.svg",
+                            alt: "Check",
+                            class: "s-5" %>
+            </div>
+            <p class="text-lg text-balance"><%= text %></p>
           </div>
-          <div class="flex items-start gap-4">
-            <%= image_tag "icons/outline-check-circle-about.svg", alt: "Check", class: "w-6" %>
-            <p class="w-[14rem] text-lg">Let your customers pay in their own currency.</p>
-          </div>
-          <div class="flex items-start gap-4">
-            <%= image_tag "icons/outline-check-circle-about.svg", alt: "Check", class: "w-6" %>
-            <p class="w-[14rem] text-lg">Choose between one-time, recurring, or fixed-length payments in your currency of choice.</p>
-          </div>
+          <% end %>
         </div>
       </div>
       <div class="flex flex-col md:relative bg-white border border-gray-300 rounded-3xl p-8 lg:basis-2/3 h-auto md:h-[30rem]">
@@ -117,7 +119,7 @@
         </div>
       </div>
     </div>
-    <div class="flex flex-col lg:flex-row gap-9">
+    <div class="flex flex-col sm:flex-row gap-9">
       <div class="bg-white border border-gray-300 rounded-3xl p-8 md:p-14 flex-1">
         <div class="flex flex-col md:relative">
           <div class="order-2 md:order-none">
