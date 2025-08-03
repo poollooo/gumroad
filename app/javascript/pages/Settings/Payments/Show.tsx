@@ -44,6 +44,7 @@ import { UpdateCountryConfirmationModal } from "$app/components/UpdateCountryCon
 import { useUserAgentInfo } from "$app/components/UserAgent";
 import { WithTooltip } from "$app/components/WithTooltip";
 
+import logopaypal from "$assets/images/brands/paypal.svg";
 import logo from "$assets/images/logo-g.svg";
 
 export type PayoutDebitCardData = { type: "saved" } | { type: "new"; element: StripeCardElement } | undefined;
@@ -121,6 +122,15 @@ export type ComplianceInfo = {
   guardian_individual_tax_id?: string | null;
   guardian_stripe_tos_accepted?: boolean | null;
   guardian_stripe_processing_tos_accepted?: boolean | null;
+  guardian_job_title?: string | null;
+  guardian_first_name_kanji?: string | null;
+  guardian_last_name_kanji?: string | null;
+  guardian_first_name_kana?: string | null;
+  guardian_last_name_kana?: string | null;
+  guardian_building_number?: string | null;
+  guardian_street_address_kanji?: string | null;
+  guardian_street_address_kana?: string | null;
+  guardian_nationality?: string | null;
 };
 
 type Props = {
@@ -1140,7 +1150,7 @@ export default function PaymentsPage() {
                   onClick={() => updatePayoutMethod("paypal")}
                   disabled={props.is_form_disabled}
                 >
-                  <Icon name="shop-window" />
+                <img src={logopaypal} alt="PayPal" className="mr-2 inline-block h-5 w-5 align-middle" />
                   <div>
                     <h4>PayPal</h4>
                   </div>
