@@ -180,6 +180,7 @@ type Props = {
   payout_frequency: PayoutFrequency;
   payout_frequency_daily_supported: boolean;
   both_user_and_guardian_verified: boolean;
+  user_under_18: boolean;
   errors?: {
     base?: string[];
     error_code?: string[];
@@ -948,7 +949,7 @@ export default function PaymentsPage() {
           </Alert>
         ) : null}
         <section>
-          {props.show_legal_guardian_verification_section ? <LegalGuardianInformationRequiredBanner /> : null}
+          {props.user_under_18 ? <LegalGuardianInformationRequiredBanner /> : null}
           <header>
             <h2>Verification</h2>
           </header>
