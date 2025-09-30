@@ -72,6 +72,7 @@ class LinkPolicy < ApplicationPolicy
       :custom_button_text_option,
       :custom_summary,
       :is_epublication,
+      :isbn,
       :display_product_reviews,
       :is_adult,
       :discover_fee_per_thousand,

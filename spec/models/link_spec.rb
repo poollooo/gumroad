@@ -298,6 +298,41 @@ describe Link, :vcr do
     end
   end
 
+  describe "ISBN validation" do
+    it "allows valid ISBN-13 with hyphens" do
+      product = build(:product, isbn: "979-8-89170-497-8")
+      expect(product).to be_valid
+    end
+
+    it "allows valid ISBN-13 without hyphens" do
+      product = build(:product, isbn: "9798891704978")
+      expect(product).to be_valid
+    end
+
+    it "allows ISBN to be blank" do
+      product = build(:product, isbn: nil)
+      expect(product).to be_valid
+    end
+
+    it "rejects invalid ISBN with less than 13 digits" do
+      product = build(:product, isbn: "979-8-8917")
+      expect(product).not_to be_valid
+      expect(product.errors[:isbn]).to include "must be a valid ISBN-13 (13 digits, optionally with hyphens)"
+    end
+
+    it "rejects invalid ISBN with more than 13 digits" do
+      product = build(:product, isbn: "979-8-89170-497-8-1")
+      expect(product).not_to be_valid
+      expect(product.errors[:isbn]).to include "must be a valid ISBN-13 (13 digits, optionally with hyphens)"
+    end
+
+    it "rejects ISBN with letters" do
+      product = build(:product, isbn: "979-8-ABCDE-497-8")
+      expect(product).not_to be_valid
+      expect(product.errors[:isbn]).to include "must be a valid ISBN-13 (13 digits, optionally with hyphens)"
+    end
+  end
+
   describe "callbacks" do
     describe "set_default_discover_fee_per_thousand" do
       it "sets the boosted discover fee when user has discover_boost_enabled" do

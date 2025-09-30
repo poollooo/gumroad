@@ -1,5 +1,22 @@
 <% content_for :meta do %>
   <link href="<%= @product.long_url %>" rel="canonical">
+  <% if @product.isbn.present? %>
+    <meta property="books:isbn" content="<%= @product.isbn %>">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Book",
+        "isbn": "<%= @product.isbn %>",
+        "name": "<%= j @product.name %>",
+        "author": {
+          "@type": "Person",
+          "name": "<%= j @product.user.name %>"
+        },
+        "description": "<%= j strip_tags(@product.description).truncate(200) %>"<% if @product.thumbnail&.url.present? %>,
+        "image": "<%= @product.thumbnail.url %>"<% end %>
+      }
+    </script>
+  <% end %>
 <% end %>
 
 <%= render("layouts/custom_styles/style") %>

@@ -427,15 +427,36 @@ export const ProductTab = () => {
                       : "Publicly show the number of sales on your product page"}
                   </Toggle>
                   {product.native_type !== "physical" ? (
-                    <Toggle
-                      value={product.is_epublication}
-                      onChange={(newValue) => updateProduct({ is_epublication: newValue })}
-                    >
-                      Mark product as e-publication for VAT purposes{" "}
-                      <a href="/help/article/10-dealing-with-vat" target="_blank" rel="noreferrer">
-                        Learn more
-                      </a>
-                    </Toggle>
+                    <>
+                      <Toggle
+                        value={product.is_epublication}
+                        onChange={(newValue) => updateProduct({ is_epublication: newValue })}
+                      >
+                        Mark product as e-publication for VAT purposes{" "}
+                        <a href="/help/article/10-dealing-with-vat" target="_blank" rel="noreferrer">
+                          Learn more
+                        </a>
+                      </Toggle>
+                      {product.is_epublication ? (
+                        <div className="flex flex-col gap-2">
+                          <label htmlFor={`${uid}-isbn`} className="text-sm font-medium">
+                            ISBN (optional)
+                          </label>
+                          <input
+                            id={`${uid}-isbn`}
+                            type="text"
+                            value={product.isbn || ""}
+                            onChange={(e) => updateProduct({ isbn: e.target.value || null })}
+                            placeholder="979-8-89170-497-8"
+                            className="input"
+                          />
+                          <p className="text-gray-600 text-xs">
+                            Enter the ISBN-13 for your eBook to make it discoverable on sites like GoodReads. Format: 13
+                            digits with optional hyphens.
+                          </p>
+                        </div>
+                      ) : null}
+                    </>
                   ) : null}
                   {!seller_refund_policy_enabled ? (
                     <RefundPolicySelector

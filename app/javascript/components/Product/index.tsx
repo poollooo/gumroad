@@ -114,6 +114,7 @@ export type Product = {
   sales_count: number | null;
   summary: string | null;
   attributes: { name: string; value: string }[];
+  isbn?: string | null;
   free_trial: FreeTrial | null;
   rental: Rental | null;
   recurrences: Recurrences | null;
@@ -575,7 +576,7 @@ export const Product = ({
               Watch link provided after purchase
             </div>
           ) : null}
-          {product.summary || product.attributes.length > 0 ? (
+          {product.summary || product.attributes.length > 0 || product.isbn ? (
             <div className="stack">
               {product.summary ? <p>{product.summary}</p> : null}
               {product.attributes.map(({ name, value }, idx) => (
@@ -584,6 +585,12 @@ export const Product = ({
                   <div>{value}</div>
                 </div>
               ))}
+              {product.isbn ? (
+                <div>
+                  <h5>ISBN</h5>
+                  <div>{product.isbn}</div>
+                </div>
+              ) : null}
             </div>
           ) : null}
           <ShareSection product={product} selection={selection} wishlists={wishlists} />

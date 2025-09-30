@@ -105,6 +105,7 @@ export type Product = {
   should_show_sales_count: boolean;
   hide_sold_out_variants: boolean;
   is_epublication: boolean;
+  isbn: string | null;
   product_refund_policy_enabled: boolean;
   refund_policy: RefundPolicy;
   is_published: boolean;

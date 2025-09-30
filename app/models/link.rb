@@ -203,6 +203,7 @@ class Link < ApplicationRecord
   validate :commission_price_is_valid, if: -> { native_type == Link::NATIVE_TYPE_COMMISSION }
   validate :one_coffee_per_user, on: :create, if: -> { native_type == Link::NATIVE_TYPE_COFFEE }
   validate :quantity_enabled_state_is_allowed
+  validate :isbn_format_is_valid, if: -> { isbn.present? }
 
   validates_associated :installment_plan, message: -> (link, _) { link.installment_plan.errors.full_messages.first }
 
@@ -223,6 +224,7 @@ class Link < ApplicationRecord
   attr_json_data_accessor :excluded_sales_tax_regions, default: -> { [] }
   attr_json_data_accessor :sections, default: -> { [] }
   attr_json_data_accessor :main_section_index, default: -> { 0 }
+  attr_json_data_accessor :isbn
 
   scope :alive,                           -> { where(purchase_disabled_at: nil, banned_at: nil, deleted_at: nil) }
   scope :visible,                         -> { where(deleted_at: nil) }
@@ -1451,6 +1453,18 @@ class Link < ApplicationRecord
     def quantity_enabled_state_is_allowed
       if quantity_enabled && !can_enable_quantity?
         errors.add(:base, "Customers cannot be allowed to choose a quantity for this product.")
+      end
+    end
+
+    def isbn_format_is_valid
+      return if isbn.blank?
+
+      # Remove hyphens and spaces for validation
+      normalized_isbn = isbn.to_s.gsub(/[-\s]/, "")
+
+      # ISBN-13 format: 13 digits
+      unless normalized_isbn.match?(/\A\d{13}\z/)
+        errors.add(:isbn, "must be a valid ISBN-13 (13 digits, optionally with hyphens)")
       end
     end
 
