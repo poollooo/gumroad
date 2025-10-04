@@ -52,7 +52,6 @@ class ProductPresenter::ProductProps
         duration_in_months: product.duration_in_months,
         rental: product.rental,
         is_quantity_enabled: product.quantity_enabled,
-        isbn: product.isbn,
         free_trial: product.free_trial_enabled ? {
           duration: {
             unit: product.free_trial_duration_unit,
