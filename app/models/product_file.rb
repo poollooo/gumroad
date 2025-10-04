@@ -26,6 +26,7 @@ class ProductFile < ApplicationRecord
 
   before_save :set_filegroup
   before_save :downcase_filetype
+  before_save :normalize_isbn
   after_commit :schedule_file_analyze, on: :create
   after_commit :stamp_existing_pdfs_if_needed, on: :update
   after_create :reset_moderated_by_iffy_flag
@@ -43,6 +44,8 @@ class ProductFile < ApplicationRecord
   validate :valid_url?, on: :create
   validate :belongs_to_product_or_installment, on: :save
   validate :thumbnail_is_vaild
+  validate :isbn_only_for_supported_file_types
+  validates :isbn, isbn: true, allow_blank: true
 
   after_save :invalidate_product_cache
   after_commit :schedule_rename_in_storage, on: :update, if: :saved_change_to_display_name?
@@ -94,6 +97,7 @@ class ProductFile < ApplicationRecord
       is_transcoding_in_progress: options[:existing_product_file] ? false : transcoding_in_progress?,
       id: external_id,
       attached_product_name: link.try(:name),
+      isbn:,
       subtitle_files: alive_subtitle_files.map do |file|
         {
           url: file.url,
@@ -132,6 +136,23 @@ class ProductFile < ApplicationRecord
 
   def mobi?
     filetype == "mobi"
+  end
+
+  def supports_isbn?
+    pdf? || epub? || mobi?
+  end
+
+  def isbn_formatted
+    return isbn if isbn.blank? || isbn.length < 10
+
+    normalized = isbn.gsub(/[-\s]/, "")
+    if normalized.length == 13
+      "#{normalized[0..2]}-#{normalized[3]}-#{normalized[4..6]}-#{normalized[7..11]}-#{normalized[12]}"
+    elsif normalized.length == 10
+      "#{normalized[0]}-#{normalized[1..2]}-#{normalized[3..8]}-#{normalized[9]}"
+    else
+      isbn
+    end
   end
 
   def streamable?
@@ -381,6 +402,17 @@ class ProductFile < ApplicationRecord
         else
           link.enable_transcode_videos_on_purchase!
         end
+      end
+    end
+
+    def normalize_isbn
+      return if isbn.blank?
+      self.isbn = isbn.gsub(/[-\s]/, "")
+    end
+
+    def isbn_only_for_supported_file_types
+      if isbn.present? && !supports_isbn?
+        errors.add(:isbn, "is only supported for PDF, EPUB, and MOBI files")
       end
     end
 end
