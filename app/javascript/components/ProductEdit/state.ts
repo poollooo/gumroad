@@ -105,7 +105,6 @@ export type Product = {
   should_show_sales_count: boolean;
   hide_sold_out_variants: boolean;
   is_epublication: boolean;
-  isbn: string | null;
   product_refund_policy_enabled: boolean;
   refund_policy: RefundPolicy;
   is_published: boolean;
@@ -218,6 +217,7 @@ export type FileEntry = {
   is_transcoding_in_progress: boolean;
   id: string; // id is either server ID or, in case of unsaved dropbox files, `drop_[external_id]`
   url: string | null;
+  isbn?: string | null;
   subtitle_files: SubtitleFile[];
   status: FileStatus | { type: "removed"; previousStatus: FileStatus };
   thumbnail: ThumbnailFile | null;

@@ -598,6 +598,20 @@ const FileEmbedNodeView = ({ node, editor, getPos, updateAttributes }: NodeViewP
               </label>
             ) : null}
 
+            {file.extension === "pdf" || file.extension === "epub" || file.extension === "mobi" ? (
+              <fieldset>
+                <label htmlFor={`file-${file.id}-isbn`}>ISBN (optional)</label>
+                <input
+                  id={`file-${file.id}-isbn`}
+                  type="text"
+                  value={file.isbn ?? ""}
+                  onChange={(e) => updateFile({ isbn: e.target.value || null })}
+                  placeholder="978-0-13-235088-4"
+                />
+                <small>Enter ISBN-10 or ISBN-13 for this e-publication file</small>
+              </fieldset>
+            ) : null}
+
             {file.is_streamable ? (
               <>
                 <fieldset>
