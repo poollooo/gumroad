@@ -1,5 +1,11 @@
 <% content_for :meta do %>
   <link href="<%= @product.long_url %>" rel="canonical">
+
+  <% if @product.alive_product_files.any?(&:isbn) %>
+    <script type="application/ld+json">
+      <%= book_structured_data(@product) %>
+    </script>
+  <% end %>
 <% end %>
 
 <%= render("layouts/custom_styles/style") %>
