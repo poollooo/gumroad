@@ -598,7 +598,7 @@ const FileEmbedNodeView = ({ node, editor, getPos, updateAttributes }: NodeViewP
               </label>
             ) : null}
 
-            {file.extension === "pdf" || file.extension === "epub" || file.extension === "mobi" ? (
+            {file.is_pdf || file.extension?.toLowerCase() === "epub" || file.extension?.toLowerCase() === "mobi" ? (
               <fieldset>
                 <label htmlFor={`file-${file.id}-isbn`}>ISBN (optional)</label>
                 <input
