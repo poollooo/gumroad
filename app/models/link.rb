@@ -1456,13 +1456,30 @@ class Link < ApplicationRecord
     end
 
     def isbn_format_is_valid
-      # Remove hyphens and spaces for validation
-      normalized_isbn = isbn.to_s.gsub(/[-\s]/, "")
+      normalized = isbn.to_s.gsub(/[-\s]/, "")
 
-      # ISBN-13 format: 13 digits
-      unless normalized_isbn.match?(/\A\d{13}\z/)
-        errors.add(:isbn, "must be a valid ISBN-13 (13 digits, optionally with hyphens)")
+      isbn_10_pattern = /\A\d{9}[\dX]\z/i
+      isbn_13_pattern = /\A\d{13}\z/
+
+      case normalized
+      when isbn_10_pattern
+        errors.add(:isbn, "has an invalid ISBN-10 checksum") unless valid_isbn_10?(normalized)
+      when isbn_13_pattern
+        errors.add(:isbn, "has an invalid ISBN-13 checksum") unless valid_isbn_13?(normalized)
+      else
+        errors.add(:isbn, "must be a valid ISBN-10 (10 characters) or ISBN-13 (13 digits)")
       end
+    end
+
+    def valid_isbn_10?(isbn)
+      sum = isbn[0..8].chars.each_with_index.sum { |char, i| char.to_i * (10 - i) }
+      check_digit = isbn[9].upcase == "X" ? 10 : isbn[9].to_i
+      (sum + check_digit) % 11 == 0
+    end
+
+    def valid_isbn_13?(isbn)
+      sum = isbn[0..11].chars.each_with_index.sum { |char, i| char.to_i * (i.even? ? 1 : 3) }
+      ((10 - sum % 10) % 10) == isbn[12].to_i
     end
 
     def custom_permalink_or_is_licensed_changed?
