@@ -140,7 +140,7 @@ class LinkPolicy < ApplicationPolicy
       tags: [],
       rich_content:,
       files: [:id, :display_name, :description, :folder_id, :size, :position, :url,
-              :extension, :stream_only, :pdf_stamp_enabled, :modified, subtitle_files: [:url, :language], thumbnail: [:signed_id]],
+              :extension, :stream_only, :pdf_stamp_enabled, :modified, :isbn, subtitle_files: [:url, :language], thumbnail: [:signed_id]],
       call_limitation_info: [:minimum_notice_in_minutes, :maximum_calls_per_day],
       public_files: [:id, :name, status: [:type]],
       cancellation_discount: [
