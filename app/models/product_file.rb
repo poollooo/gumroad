@@ -24,6 +24,7 @@ class ProductFile < ApplicationRecord
 
   has_one_attached :thumbnail
 
+  before_validation :set_filetype_from_url, on: :create
   before_save :set_filegroup
   before_save :downcase_filetype
   before_save :normalize_isbn
@@ -414,5 +415,12 @@ class ProductFile < ApplicationRecord
       if isbn.present? && !supports_isbn?
         errors.add(:isbn, "is only supported for PDF, EPUB, and MOBI files")
       end
+    end
+
+    def set_filetype_from_url
+      return if filetype.present? || url.blank?
+
+      extension = s3_extension&.delete(".")
+      self.filetype = extension.downcase if extension.present?
     end
 end
