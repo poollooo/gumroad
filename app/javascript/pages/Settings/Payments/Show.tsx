@@ -950,7 +950,7 @@ export default function PaymentsPage() {
             )}
           </Alert>
         ) : null}
-        <section>
+        <section className="p-4! md:p-8!">
           {props.user_under_18 && props.guardian_verification_state !== "not_required" ? (
             <LegalGuardianInformationRequiredBanner status={props.guardian_verification_state} />
           ) : null}
@@ -1138,7 +1138,7 @@ export default function PaymentsPage() {
                   onClick={() => updatePayoutMethod("paypal")}
                   disabled={props.is_form_disabled}
                 >
-                <img src={logopaypal} alt="PayPal" className="mr-2 inline-block h-5 w-5 align-middle" />
+                  <img src={logopaypal} alt="PayPal" className="mr-2 inline-block h-5 w-5 align-middle" />
                   <div>
                     <h4>PayPal</h4>
                   </div>
@@ -1209,7 +1209,6 @@ export default function PaymentsPage() {
                 canadaBusinessTypes={props.canada_business_types}
                 states={props.states}
                 errorFieldNames={errorFieldNames}
-                payoutMethod={selectedPayoutMethod}
                 isLegalGuardianInformationRequired={props.guardian_verification_state !== "not_required"}
               />
             ) : (
@@ -1222,7 +1221,7 @@ export default function PaymentsPage() {
           </section>
         </section>
         {props.user_under_18 && props.guardian_verification_state !== "not_required" ? (
-          <section>
+          <section className="p-4! md:p-8!">
             <header>
               <h2>Legal guardian’s details</h2>
               <div>
