@@ -320,6 +320,8 @@ class SettingsPresenter
     end
 
     def compliance_info_details(user_compliance_info)
+      guardian = seller.guardian
+
       {
         is_business: user_compliance_info.is_business?,
         business_name: user_compliance_info.business_name,
@@ -355,20 +357,20 @@ class SettingsPresenter
         dob_month: user_compliance_info.birthday.try(:month).to_i,
         dob_day: user_compliance_info.birthday.try(:day).to_i,
         dob_year: user_compliance_info.birthday.try(:year).to_i,
-        guardian_first_name: seller.guardian&.first_name,
-        guardian_last_name: seller.guardian&.last_name,
-        guardian_email: seller.guardian&.email,
-        guardian_phone: seller.guardian&.phone,
-        guardian_street_address: seller.guardian&.street_address,
-        guardian_city: seller.guardian&.city,
-        guardian_state: seller.guardian&.state,
-        guardian_country: seller.guardian&.country_code || user_compliance_info.country_code,
-        guardian_zip_code: seller.guardian&.zip_code,
-        guardian_dob_month: seller.guardian&.date_of_birth.try(:month).to_i,
-        guardian_dob_day: seller.guardian&.date_of_birth.try(:day).to_i,
-        guardian_dob_year: seller.guardian&.date_of_birth.try(:year).to_i,
-        guardian_stripe_tos_accepted: seller.guardian&.stripe_tos_accepted,
-        guardian_stripe_processing_tos_accepted: seller.guardian&.stripe_processing_tos_accepted,
+        guardian_first_name: guardian&.first_name,
+        guardian_last_name: guardian&.last_name,
+        guardian_email: guardian&.email,
+        guardian_phone: guardian&.phone,
+        guardian_street_address: guardian&.street_address,
+        guardian_city: guardian&.city,
+        guardian_state: guardian&.state,
+        guardian_country: guardian&.country_code || user_compliance_info.country_code,
+        guardian_zip_code: guardian&.zip_code,
+        guardian_dob_month: guardian&.date_of_birth&.month,
+        guardian_dob_day: guardian&.date_of_birth&.day,
+        guardian_dob_year: guardian&.date_of_birth&.year,
+        guardian_stripe_tos_accepted: guardian&.stripe_tos_accepted,
+        guardian_stripe_processing_tos_accepted: guardian&.stripe_processing_tos_accepted,
       }
     end
 
