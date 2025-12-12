@@ -138,6 +138,7 @@ class Guardian < ApplicationRecord
   validates :zip_code, presence: true
   validates :country, presence: true
   validates :date_of_birth, presence: true
+  validates :stripe_person_id, uniqueness: true, allow_nil: true
   validate :guardian_must_be_at_least_18, if: -> { date_of_birth.present? }
 
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, on: :submission
