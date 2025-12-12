@@ -203,7 +203,6 @@ class Settings::PaymentsController < Settings::BaseController
     end
 
     def update_user_compliance_info
-      # Handle both user params and user_compliance_info params for guardian information
       compliance_params_to_use = params[:user_compliance_info].present? ? params[:user_compliance_info] : params[:user]
 
       unless user_requires_guardian_verification?

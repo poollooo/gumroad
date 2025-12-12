@@ -1072,10 +1072,8 @@ class User < ApplicationRecord
     end
 
     def map_stripe_guardian_field_to_internal_field(stripe_field, guardian_person_id)
-      # Convert person_XXXX.first_name to guardian_first_name
       internal_field = stripe_field.gsub(/^person_#{guardian_person_id}\./, "guardian_")
 
-      # Map common Stripe fields to internal fields
       field_mapping = {
         "guardian_first_name" => Guardian::RequestFields::FIRST_NAME,
         "guardian_last_name" => Guardian::RequestFields::LAST_NAME,
