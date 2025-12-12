@@ -162,6 +162,8 @@ class Guardian < ApplicationRecord
   def has_completed_info?
     first_name.present? &&
       last_name.present? &&
+      email.present? &&
+      phone.present? &&
       date_of_birth.present? &&
       street_address.present? &&
       city.present? &&
