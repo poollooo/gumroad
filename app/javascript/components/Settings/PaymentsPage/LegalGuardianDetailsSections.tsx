@@ -328,6 +328,7 @@ const LegalGuardianDetailsSections = ({
                   required
                   disabled={isFormDisabled}
                   aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                  value={complianceInfo.guardian_individual_tax_id || ""}
                   onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
                 />
               </div>
@@ -345,6 +346,7 @@ const LegalGuardianDetailsSections = ({
                   required
                   disabled={isFormDisabled}
                   aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                  value={complianceInfo.guardian_individual_tax_id || ""}
                   onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
                 />
               </div>
@@ -363,6 +365,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -380,6 +383,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -397,6 +401,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -414,6 +419,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -431,6 +437,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -448,6 +455,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -465,6 +473,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -482,6 +491,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -499,6 +509,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -516,6 +527,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -533,6 +545,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -550,6 +563,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -567,6 +581,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -586,6 +601,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -603,6 +619,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -620,6 +637,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -637,6 +655,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -656,6 +675,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -673,6 +693,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
@@ -690,6 +711,7 @@ const LegalGuardianDetailsSections = ({
                 required
                 disabled={isFormDisabled}
                 aria-invalid={errorFieldNames.has("guardian_individual_tax_id")}
+                value={complianceInfo.guardian_individual_tax_id || ""}
                 onChange={(evt) => updateComplianceInfo({ guardian_individual_tax_id: evt.target.value })}
               />
             </div>
