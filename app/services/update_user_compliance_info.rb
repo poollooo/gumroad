@@ -41,7 +41,7 @@ class UpdateUserComplianceInfo
     begin
       StripeMerchantAccountManager.handle_new_user_compliance_info(new_compliance_info)
       UserComplianceInfoRequest.handle_new_user_compliance_info(new_compliance_info)
-    rescue Stripe::InvalidRequestError => e
+    rescue Stripe::StripeError => e
       return { success: false, error_message: "Compliance info update failed with this error: #{e.message.split("Please contact us").first.strip}", error_code: "stripe_error" }
     end
 
@@ -83,8 +83,11 @@ class UpdateUserComplianceInfo
     end
 
     def assign_tax_and_date_fields(info)
-      info.individual_tax_id = compliance_params[:ssn_last_four] if compliance_params[:ssn_last_four].present?
-      info.individual_tax_id = compliance_params[:individual_tax_id] if compliance_params[:individual_tax_id].present?
+      if compliance_params[:individual_tax_id].present?
+        info.individual_tax_id = compliance_params[:individual_tax_id]
+      elsif compliance_params[:ssn_last_four].present?
+        info.individual_tax_id = compliance_params[:ssn_last_four]
+      end
       info.business_tax_id = compliance_params[:business_tax_id] if compliance_params[:business_tax_id].present?
       info.business_vat_id_number = compliance_params[:business_vat_id_number] if compliance_params[:business_vat_id_number].present?
 
@@ -152,8 +155,11 @@ class UpdateUserComplianceInfo
     end
 
     def assign_guardian_tax_id(guardian)
-      guardian.individual_tax_id = compliance_params[:guardian_ssn_last_four] if compliance_params[:guardian_ssn_last_four].present?
-      guardian.individual_tax_id = compliance_params[:guardian_individual_tax_id] if compliance_params[:guardian_individual_tax_id].present?
+      if compliance_params[:guardian_individual_tax_id].present?
+        guardian.individual_tax_id = compliance_params[:guardian_individual_tax_id]
+      elsif compliance_params[:guardian_ssn_last_four].present?
+        guardian.individual_tax_id = compliance_params[:guardian_ssn_last_four]
+      end
     end
 
     def assign_guardian_tos_fields(guardian)
@@ -165,17 +171,6 @@ class UpdateUserComplianceInfo
       if compliance_params[:guardian_stripe_processing_tos_accepted].present?
         guardian.stripe_processing_tos_accepted = ActiveModel::Type::Boolean.new.cast(compliance_params[:guardian_stripe_processing_tos_accepted])
       end
-    end
-
-    def filter_sensitive_params(params)
-      filtered = params.dup
-      sensitive_keys = [:individual_tax_id, :business_tax_id, :guardian_individual_tax_id, :ssn_last_four, :guardian_ssn_last_four]
-
-      sensitive_keys.each do |key|
-        filtered[key] = "[FILTERED]" if filtered[key].present?
-      end
-
-      filtered
     end
 
     def parse_date(year, month, day)
