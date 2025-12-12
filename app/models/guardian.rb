@@ -174,7 +174,7 @@ class Guardian < ApplicationRecord
   end
 
   def has_individual_tax_id?
-    individual_tax_id.present? && individual_tax_id.to_s != ""
+    individual_tax_id.present?
   end
 
   private
