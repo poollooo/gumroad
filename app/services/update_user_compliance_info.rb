@@ -89,11 +89,12 @@ class UpdateUserComplianceInfo
       info.business_vat_id_number = compliance_params[:business_vat_id_number] if compliance_params[:business_vat_id_number].present?
 
       if compliance_params[:dob_year].present? && compliance_params[:dob_year].to_i > 0
-        info.birthday = Date.new(
+        date = parse_date(
           compliance_params[:dob_year].to_i,
           compliance_params[:dob_month].to_i,
           compliance_params[:dob_day].to_i
         )
+        info.birthday = date if date
       end
     end
 
@@ -142,11 +143,12 @@ class UpdateUserComplianceInfo
       return if compliance_params[:guardian_dob_month].blank?
       return if compliance_params[:guardian_dob_day].blank?
 
-      guardian.date_of_birth = Date.new(
+      date = parse_date(
         compliance_params[:guardian_dob_year].to_i,
         compliance_params[:guardian_dob_month].to_i,
         compliance_params[:guardian_dob_day].to_i
       )
+      guardian.date_of_birth = date if date
     end
 
     def assign_guardian_tax_id(guardian)
@@ -174,5 +176,14 @@ class UpdateUserComplianceInfo
       end
 
       filtered
+    end
+
+    def parse_date(year, month, day)
+      return nil if year <= 0 || month <= 0 || day <= 0
+      return nil if month > 12 || day > 31
+
+      Date.new(year, month, day)
+    rescue ArgumentError
+      nil
     end
 end
