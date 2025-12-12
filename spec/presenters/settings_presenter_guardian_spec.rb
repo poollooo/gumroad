@@ -56,7 +56,6 @@ RSpec.describe SettingsPresenter, type: :presenter do
     context "when user has Stripe account and update permissions" do
       before do
         allow(Pundit).to receive(:policy!).and_return(double(update?: true))
-        # Set user as under 18 for guardian verification scenarios
         _, _ = user_compliance_info.dup_and_save { |new_info| new_info.birthday = 16.years.ago.to_date }
         user.reload
       end
@@ -77,9 +76,8 @@ RSpec.describe SettingsPresenter, type: :presenter do
         end
 
         it "returns requires_input when guardian email is missing" do
-          # Create guardian with missing email
           guardian = create(:guardian_empty, email: "temp@example.com")
-          guardian.update_column(:email, nil) # bypass validation to test incomplete state
+          guardian.update_column(:email, nil)
           user.alive_user_compliance_info.update!(guardian: guardian)
           user.reload
 
@@ -87,9 +85,8 @@ RSpec.describe SettingsPresenter, type: :presenter do
         end
 
         it "returns requires_input when guardian address is incomplete" do
-          # Create guardian with missing address
           guardian = create(:guardian_empty)
-          guardian.update_column(:street_address, nil) # bypass validation
+          guardian.update_column(:street_address, nil)
           user.alive_user_compliance_info.update!(guardian: guardian)
           user.reload
 
@@ -97,9 +94,8 @@ RSpec.describe SettingsPresenter, type: :presenter do
         end
 
         it "returns requires_input when guardian date of birth is incomplete" do
-          # Create guardian with missing date_of_birth
           guardian = create(:guardian_empty)
-          guardian.update_column(:date_of_birth, nil) # bypass validation
+          guardian.update_column(:date_of_birth, nil)
           user.alive_user_compliance_info.update!(guardian: guardian)
           user.reload
 
@@ -107,7 +103,6 @@ RSpec.describe SettingsPresenter, type: :presenter do
         end
 
         it "returns requires_input when guardian tax ID is missing" do
-          # Create guardian without tax ID (guardian_empty has no tax ID)
           guardian = create(:guardian_empty)
           user.alive_user_compliance_info.update!(guardian: guardian)
           user.reload
@@ -153,15 +148,12 @@ RSpec.describe SettingsPresenter, type: :presenter do
       before do
         allow(user).to receive(:stripe_account).and_return(build(:merchant_account))
         allow(Pundit).to receive(:policy!).and_return(double(update?: true))
-        # Set user as under 18 for guardian scenarios
         _, _ = user_compliance_info.dup_and_save { |new_info| new_info.birthday = 16.years.ago.to_date }
         user.reload
         create(:user_compliance_info_request, user: user, field_needed: "guardian_first_name")
       end
 
       it "handles nil compliance info gracefully" do
-        # Even with nil compliance info, if user has requests, we need to check age from the database
-        # But with nil compliance info, under_18? will return false, so it should be "not_required"
         allow(user).to receive(:alive_user_compliance_info).and_return(nil)
 
         expect(presenter.guardian_verification_state).to eq("not_required")
@@ -169,7 +161,6 @@ RSpec.describe SettingsPresenter, type: :presenter do
 
       it "treats empty strings as incomplete" do
         guardian = create(:guardian_empty)
-        guardian.update_column(:first_name, "") # bypass validation to set empty string
         user.alive_user_compliance_info.update!(guardian: guardian)
         user.reload
 
@@ -178,7 +169,7 @@ RSpec.describe SettingsPresenter, type: :presenter do
 
       it "treats whitespace-only strings as incomplete" do
         guardian = create(:guardian_empty)
-        guardian.update_column(:first_name, "   ") # bypass validation to set whitespace
+        guardian.update_column(:first_name, "   ")
         user.alive_user_compliance_info.update!(guardian: guardian)
         user.reload
 
@@ -187,7 +178,7 @@ RSpec.describe SettingsPresenter, type: :presenter do
 
       it "handles missing date of birth components" do
         guardian = create(:guardian_empty)
-        guardian.update_column(:date_of_birth, nil) # bypass validation
+        guardian.update_column(:date_of_birth, nil)
         user.alive_user_compliance_info.update!(guardian: guardian)
         user.reload
 
@@ -195,9 +186,8 @@ RSpec.describe SettingsPresenter, type: :presenter do
       end
 
       it "handles zero values for date components" do
-        # A date with zero components would be invalid, test incomplete guardian
         guardian = create(:guardian_empty)
-        guardian.update_column(:date_of_birth, nil) # bypass validation
+        guardian.update_column(:date_of_birth, nil)
         user.alive_user_compliance_info.update!(guardian: guardian)
         user.reload
 

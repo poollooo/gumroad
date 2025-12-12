@@ -17,7 +17,7 @@ class UserComplianceInfoRequest < ApplicationRecord
   attr_json_data_writer :emails_sent_at
   attr_json_data_accessor :sg_verification_reminder_sent_at
   attr_json_data_accessor :verification_error
-  attr_json_data_accessor :guardian_person_id  # Store Stripe person ID for guardian fields
+  attr_json_data_accessor :guardian_person_id
 
   state_machine :state, initial: :requested do
     before_transition any => :provided, :do => lambda { |user_compliance_info_request|
@@ -61,7 +61,6 @@ class UserComplianceInfoRequest < ApplicationRecord
   def self.handle_new_user_compliance_info(user_compliance_info)
     user = user_compliance_info.user
 
-    # Handle UserComplianceInfo fields
     UserComplianceInfoFields.all_fields_on_user_compliance_info.each do |field|
       field_value = user_compliance_info.send(field)
       field_value = field_value.decrypt(GlobalConfig.get("STRONGBOX_GENERAL_PASSWORD")) if field_value.is_a?(Strongbox::Lock)
@@ -88,7 +87,6 @@ class UserComplianceInfoRequest < ApplicationRecord
       requests.find_each(&:mark_provided!)
     end
 
-    # Handle Guardian fields from the Guardian model
     handle_guardian_compliance_info(user)
   end
 

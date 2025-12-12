@@ -206,14 +206,10 @@ class Settings::PaymentsController < Settings::BaseController
       # Handle both user params and user_compliance_info params for guardian information
       compliance_params_to_use = params[:user_compliance_info].present? ? params[:user_compliance_info] : params[:user]
 
-      # Filter out guardian params if user doesn't require guardian verification
       unless user_requires_guardian_verification?
         compliance_params_to_use = filter_out_guardian_params(compliance_params_to_use) if compliance_params_to_use.present?
       end
 
-      # Only validate guardian information if:
-      # 1. User is actually under 18, AND
-      # 2. Guardian parameters are present in the request
       if compliance_params_to_use.present? &&
          user_requires_guardian_verification? &&
          has_guardian_params?(compliance_params_to_use)

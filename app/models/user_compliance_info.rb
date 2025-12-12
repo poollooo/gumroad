@@ -66,7 +66,7 @@ class UserComplianceInfo < ApplicationRecord
   # Public: Returns if the UserComplianceInfo record has all it's critical compliance related fields completed, these are:
   # Individual: First Name, Last Name, Address, DOB
   # Business: First Name, Last Name, Address, DOB, Business Name, Business Type, Business Address
-  # Under 18: All of the above + Guardian with completed info
+
   def has_completed_compliance_info?
     base_info_complete = first_name.present? &&
       last_name.present? &&

@@ -46,7 +46,6 @@ class Guardian < ApplicationRecord
     ].freeze
   end
 
-  # Mapping from request field identifiers to Guardian model attributes
   REQUEST_FIELD_TO_ATTRIBUTE = {
     RequestFields::FIRST_NAME => :first_name,
     RequestFields::LAST_NAME => :last_name,
@@ -67,7 +66,6 @@ class Guardian < ApplicationRecord
     RequestFields::Address::COUNTRY => :country
   }.freeze
 
-  # Direct field mappings from guardian_* params to Guardian attributes
   PARAM_TO_ATTRIBUTE_MAPPING = {
     guardian_first_name: :first_name,
     guardian_last_name: :last_name,
@@ -88,7 +86,6 @@ class Guardian < ApplicationRecord
     guardian_street_address_kana: :street_address_kana
   }.freeze
 
-  # All guardian param fields used for detection
   PARAM_FIELDS = %i[
     guardian_first_name guardian_last_name guardian_email guardian_phone
     guardian_street_address guardian_city guardian_state guardian_zip_code
@@ -101,14 +98,12 @@ class Guardian < ApplicationRecord
     guardian_building_number guardian_street_address_kanji guardian_street_address_kana
   ].freeze
 
-  # Required fields for guardian validation
   REQUIRED_PARAM_FIELDS = %w[
     guardian_first_name guardian_last_name guardian_email guardian_phone
     guardian_street_address guardian_city guardian_state guardian_zip_code
     guardian_country guardian_dob_year guardian_dob_month guardian_dob_day
   ].freeze
 
-  # Human-readable labels for required fields
   REQUIRED_FIELD_LABELS = {
     "guardian_first_name" => "first name",
     "guardian_last_name" => "last name",
@@ -133,7 +128,6 @@ class Guardian < ApplicationRecord
                                                          GlobalConfig.get("STRONGBOX_GENERAL_PASSWORD")).public_key,
                           private_key: GlobalConfig.get("STRONGBOX_GENERAL")
 
-  # Base validations - always enforced (match DB NOT NULL constraints)
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, presence: true
