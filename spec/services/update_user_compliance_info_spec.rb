@@ -191,6 +191,188 @@ RSpec.describe UpdateUserComplianceInfo do
         expect(result[:success]).to eq(true)
       end
     end
+
+    context "with guardian tax ID params" do
+      let(:base_guardian_params) do
+        {
+          guardian_first_name: "John",
+          guardian_last_name: "Guardian",
+          guardian_email: "guardian@example.com",
+          guardian_phone: "+14155551234",
+          guardian_street_address: "123 Main St",
+          guardian_city: "San Francisco",
+          guardian_state: "CA",
+          guardian_zip_code: "94107",
+          guardian_country: "US",
+          guardian_dob_year: "1980",
+          guardian_dob_month: "6",
+          guardian_dob_day: "15",
+          guardian_stripe_tos_accepted: true,
+          guardian_stripe_processing_tos_accepted: true
+        }
+      end
+
+      it "uses individual_tax_id when provided" do
+        params = base_guardian_params.merge(guardian_individual_tax_id: "123456789")
+
+        service = described_class.new(compliance_params: params, user: user, remote_ip: remote_ip)
+        service.process
+
+        guardian = user.reload.guardian
+        expect(guardian.individual_tax_id.decrypt("1234")).to eq("123456789")
+      end
+
+      it "uses ssn_last_four when individual_tax_id is not provided" do
+        params = base_guardian_params.merge(guardian_ssn_last_four: "6789")
+
+        service = described_class.new(compliance_params: params, user: user, remote_ip: remote_ip)
+        service.process
+
+        guardian = user.reload.guardian
+        expect(guardian.individual_tax_id.decrypt("1234")).to eq("6789")
+      end
+
+      it "prefers individual_tax_id over ssn_last_four when both are provided" do
+        params = base_guardian_params.merge(
+          guardian_individual_tax_id: "123456789",
+          guardian_ssn_last_four: "6789"
+        )
+
+        service = described_class.new(compliance_params: params, user: user, remote_ip: remote_ip)
+        service.process
+
+        guardian = user.reload.guardian
+        expect(guardian.individual_tax_id.decrypt("1234")).to eq("123456789")
+      end
+    end
+
+    context "with invalid date params" do
+      let(:base_guardian_params) do
+        {
+          guardian_first_name: "John",
+          guardian_last_name: "Guardian",
+          guardian_email: "guardian@example.com",
+          guardian_phone: "+14155551234",
+          guardian_street_address: "123 Main St",
+          guardian_city: "San Francisco",
+          guardian_state: "CA",
+          guardian_zip_code: "94107",
+          guardian_country: "US",
+          guardian_stripe_tos_accepted: true,
+          guardian_stripe_processing_tos_accepted: true
+        }
+      end
+
+      it "handles invalid month gracefully" do
+        params = base_guardian_params.merge(
+          guardian_dob_year: "1980",
+          guardian_dob_month: "13",
+          guardian_dob_day: "15"
+        )
+
+        service = described_class.new(compliance_params: params, user: user, remote_ip: remote_ip)
+        result = service.process
+
+        expect(result[:success]).to eq(false)
+      end
+
+      it "handles invalid day gracefully" do
+        params = base_guardian_params.merge(
+          guardian_dob_year: "1980",
+          guardian_dob_month: "2",
+          guardian_dob_day: "30"
+        )
+
+        service = described_class.new(compliance_params: params, user: user, remote_ip: remote_ip)
+        result = service.process
+
+        expect(result[:success]).to eq(false)
+      end
+
+      it "handles zero values gracefully" do
+        params = base_guardian_params.merge(
+          guardian_dob_year: "0",
+          guardian_dob_month: "0",
+          guardian_dob_day: "0"
+        )
+
+        service = described_class.new(compliance_params: params, user: user, remote_ip: remote_ip)
+        result = service.process
+
+        expect(result[:success]).to eq(false)
+      end
+
+      it "handles negative values gracefully" do
+        params = base_guardian_params.merge(
+          guardian_dob_year: "-1",
+          guardian_dob_month: "6",
+          guardian_dob_day: "15"
+        )
+
+        service = described_class.new(compliance_params: params, user: user, remote_ip: remote_ip)
+        result = service.process
+
+        expect(result[:success]).to eq(false)
+      end
+    end
+
+    context "with Stripe errors" do
+      let(:guardian_params) do
+        {
+          guardian_first_name: "John",
+          guardian_last_name: "Guardian",
+          guardian_email: "guardian@example.com",
+          guardian_phone: "+1234567890",
+          guardian_street_address: "123 Guardian St",
+          guardian_city: "Guardian City",
+          guardian_state: "CA",
+          guardian_zip_code: "90210",
+          guardian_country: "US",
+          guardian_dob_year: "1980",
+          guardian_dob_month: "6",
+          guardian_dob_day: "15",
+          guardian_stripe_tos_accepted: "true",
+          guardian_stripe_processing_tos_accepted: "true"
+        }
+      end
+
+      it "handles Stripe::InvalidRequestError" do
+        allow(StripeMerchantAccountManager).to receive(:handle_new_user_compliance_info)
+          .and_raise(Stripe::InvalidRequestError.new("Invalid account. Please contact us for help.", nil))
+
+        service = described_class.new(compliance_params: guardian_params, user: user, remote_ip: remote_ip)
+        result = service.process
+
+        expect(result[:success]).to eq(false)
+        expect(result[:error_message]).to include("Invalid account.")
+        expect(result[:error_message]).not_to include("Please contact us")
+        expect(result[:error_code]).to eq("stripe_error")
+      end
+
+      it "handles Stripe::APIError" do
+        allow(StripeMerchantAccountManager).to receive(:handle_new_user_compliance_info)
+          .and_raise(Stripe::APIError.new("API connection failed. Please contact us for help."))
+
+        service = described_class.new(compliance_params: guardian_params, user: user, remote_ip: remote_ip)
+        result = service.process
+
+        expect(result[:success]).to eq(false)
+        expect(result[:error_message]).to include("API connection failed.")
+        expect(result[:error_code]).to eq("stripe_error")
+      end
+
+      it "handles Stripe::CardError" do
+        allow(StripeMerchantAccountManager).to receive(:handle_new_user_compliance_info)
+          .and_raise(Stripe::CardError.new("Card declined. Please contact us for help.", nil, nil))
+
+        service = described_class.new(compliance_params: guardian_params, user: user, remote_ip: remote_ip)
+        result = service.process
+
+        expect(result[:success]).to eq(false)
+        expect(result[:error_message]).to include("Card declined.")
+        expect(result[:error_code]).to eq("stripe_error")
+      end
+    end
   end
 
   describe "#has_guardian_params?" do

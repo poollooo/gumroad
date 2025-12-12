@@ -40,6 +40,27 @@ describe Guardian do
       end
     end
 
+    describe "stripe_person_id uniqueness" do
+      it "allows multiple guardians with nil stripe_person_id" do
+        create(:guardian, stripe_person_id: nil)
+        guardian2 = build(:guardian, stripe_person_id: nil)
+        expect(guardian2).to be_valid
+      end
+
+      it "prevents duplicate stripe_person_id" do
+        create(:guardian, stripe_person_id: "person_abc123")
+        guardian2 = build(:guardian, stripe_person_id: "person_abc123")
+        expect(guardian2).not_to be_valid
+        expect(guardian2.errors[:stripe_person_id]).to include("has already been taken")
+      end
+
+      it "allows different stripe_person_ids" do
+        create(:guardian, stripe_person_id: "person_abc123")
+        guardian2 = build(:guardian, stripe_person_id: "person_xyz789")
+        expect(guardian2).to be_valid
+      end
+    end
+
     describe "base validations (always enforced)" do
       it "validates required fields are present" do
         guardian = Guardian.new
@@ -107,7 +128,7 @@ describe Guardian do
 
   describe "#has_completed_info?" do
     it "returns true when all required fields are present" do
-      guardian = create(:guardian)
+      guardian = create(:guardian, stripe_person_id: "person_123")
       expect(guardian.has_completed_info?).to be(true)
     end
 
@@ -118,6 +139,16 @@ describe Guardian do
 
     it "returns false when last_name is missing" do
       guardian = build(:guardian, last_name: nil)
+      expect(guardian.has_completed_info?).to be(false)
+    end
+
+    it "returns false when email is missing" do
+      guardian = build(:guardian, email: nil)
+      expect(guardian.has_completed_info?).to be(false)
+    end
+
+    it "returns false when phone is missing" do
+      guardian = build(:guardian, phone: nil)
       expect(guardian.has_completed_info?).to be(false)
     end
 
@@ -148,6 +179,11 @@ describe Guardian do
 
     it "returns false when country is missing" do
       guardian = build(:guardian, country: nil)
+      expect(guardian.has_completed_info?).to be(false)
+    end
+
+    it "returns false when stripe_person_id is missing" do
+      guardian = create(:guardian, stripe_person_id: nil)
       expect(guardian.has_completed_info?).to be(false)
     end
   end
