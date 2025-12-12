@@ -363,7 +363,7 @@ RSpec.describe UpdateUserComplianceInfo do
 
       it "handles Stripe::CardError" do
         allow(StripeMerchantAccountManager).to receive(:handle_new_user_compliance_info)
-          .and_raise(Stripe::CardError.new("Card declined. Please contact us for help.", nil, nil))
+          .and_raise(Stripe::CardError.new("Card declined. Please contact us for help.", nil))
 
         service = described_class.new(compliance_params: guardian_params, user: user, remote_ip: remote_ip)
         result = service.process
