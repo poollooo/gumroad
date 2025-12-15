@@ -1071,30 +1071,6 @@ class User < ApplicationRecord
       update!(reset_password_token: nil, reset_password_sent_at: nil)
     end
 
-    def map_stripe_guardian_field_to_internal_field(stripe_field, guardian_person_id)
-      internal_field = stripe_field.gsub(/^person_#{guardian_person_id}\./, "guardian_")
-
-      field_mapping = {
-        "guardian_first_name" => Guardian::RequestFields::FIRST_NAME,
-        "guardian_last_name" => Guardian::RequestFields::LAST_NAME,
-        "guardian_email" => Guardian::RequestFields::EMAIL,
-        "guardian_phone" => Guardian::RequestFields::PHONE,
-        "guardian_dob.day" => Guardian::RequestFields::DATE_OF_BIRTH,
-        "guardian_dob.month" => Guardian::RequestFields::DATE_OF_BIRTH,
-        "guardian_dob.year" => Guardian::RequestFields::DATE_OF_BIRTH,
-        "guardian_id_number" => Guardian::RequestFields::TAX_ID,
-        "guardian_address.line1" => Guardian::RequestFields::Address::STREET,
-        "guardian_address.city" => Guardian::RequestFields::Address::CITY,
-        "guardian_address.state" => Guardian::RequestFields::Address::STATE,
-        "guardian_address.postal_code" => Guardian::RequestFields::Address::ZIP_CODE,
-        "guardian_address.country" => Guardian::RequestFields::Address::COUNTRY,
-        "guardian_verification.document" => Guardian::RequestFields::STRIPE_IDENTITY_DOCUMENT_ID,
-        "guardian_verification.additional_document" => Guardian::RequestFields::STRIPE_ADDITIONAL_DOCUMENT_ID
-      }
-
-      field_mapping[internal_field]
-    end
-
   private
     def append_http
       self.notification_endpoint = "http://#{notification_endpoint}" if notification_endpoint.present? && !notification_endpoint.include?("http")

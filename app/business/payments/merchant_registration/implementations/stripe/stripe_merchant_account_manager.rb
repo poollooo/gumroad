@@ -978,7 +978,6 @@ module StripeMerchantAccountManager
   end
 
   def self.handle_legal_guardian_requirements(stripe_event_id, legal_guardian_fields_needed, user, requirements_due_at)
-    # Map Stripe legal_guardian fields to internal guardian fields
     guardian_field_mappings = {
       "legal_guardian.first_name" => "guardian_first_name",
       "legal_guardian.last_name" => "guardian_last_name",
@@ -1016,30 +1015,6 @@ module StripeMerchantAccountManager
       guardian_fields = new_guardian_requests.map(&:field_needed)
       ContactingCreatorMailer.more_kyc_needed(user.id, guardian_fields).deliver_later(queue: "critical")
     end
-  end
-
-  def self.map_stripe_guardian_field_to_internal_field(stripe_field, guardian_person_id)
-    internal_field = stripe_field.gsub(/^person_#{guardian_person_id}\./, "guardian_")
-
-    field_mapping = {
-      "guardian_first_name" => Guardian::RequestFields::FIRST_NAME,
-      "guardian_last_name" => Guardian::RequestFields::LAST_NAME,
-      "guardian_email" => Guardian::RequestFields::EMAIL,
-      "guardian_phone" => Guardian::RequestFields::PHONE,
-      "guardian_dob.day" => Guardian::RequestFields::DATE_OF_BIRTH,
-      "guardian_dob.month" => Guardian::RequestFields::DATE_OF_BIRTH,
-      "guardian_dob.year" => Guardian::RequestFields::DATE_OF_BIRTH,
-      "guardian_id_number" => Guardian::RequestFields::TAX_ID,
-      "guardian_address.line1" => Guardian::RequestFields::Address::STREET,
-      "guardian_address.city" => Guardian::RequestFields::Address::CITY,
-      "guardian_address.state" => Guardian::RequestFields::Address::STATE,
-      "guardian_address.postal_code" => Guardian::RequestFields::Address::ZIP_CODE,
-      "guardian_address.country" => Guardian::RequestFields::Address::COUNTRY,
-      "guardian_verification.document" => Guardian::RequestFields::STRIPE_IDENTITY_DOCUMENT_ID,
-      "guardian_verification.additional_document" => Guardian::RequestFields::STRIPE_ADDITIONAL_DOCUMENT_ID
-    }
-
-    field_mapping[internal_field]
   end
 
   def self.handle_stripe_event_person_updated(stripe_event)
