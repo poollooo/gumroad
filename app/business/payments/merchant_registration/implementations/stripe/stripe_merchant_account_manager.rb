@@ -206,7 +206,6 @@ module StripeMerchantAccountManager
       update_person(user, stripe_account, last_user_compliance_info&.external_id, passphrase)
     end
 
-    # Add guardian person update logic
     if user.under_18?
       update_person(user, stripe_account, last_user_compliance_info&.external_id, passphrase, person_type: :guardian)
     end
@@ -757,7 +756,6 @@ module StripeMerchantAccountManager
       end
     end
 
-    # Handle legal_guardian.* fields separately for guardian compliance info requests
     legal_guardian_fields_needed = [requirements["currently_due"], requirements["eventually_due"], requirements["past_due"],
                                     future_requirements["currently_due"], future_requirements["past_due"]].compact.reduce([], :+).uniq
     legal_guardian_fields_needed = legal_guardian_fields_needed.select { |field| field.start_with?("legal_guardian.") }
@@ -908,7 +906,6 @@ module StripeMerchantAccountManager
       }
     }
 
-    # Add additional TOS acceptances if guardian has accepted
     if guardian.stripe_tos_accepted
       hash[:additional_tos_acceptances] = {
         account: {
@@ -918,7 +915,6 @@ module StripeMerchantAccountManager
       }
     end
 
-    # Use guardian's country_code, fall back to user_compliance_info country_code
     guardian_country = guardian.country_code || user_compliance_info&.country_code
 
     if guardian_country == Compliance::Countries::CAN.alpha2
@@ -955,14 +951,10 @@ module StripeMerchantAccountManager
                        })
     end
 
-    # For US accounts, only submit the Guardian Tax ID if it's longer than four digits, otherwise the field contains the SSN Last 4.
-    # For non-US accounts, always submit the Guardian Tax ID.
     if guardian_tax_id && (guardian_country != Compliance::Countries::USA.alpha2 || guardian_tax_id.length > 4)
       hash.deep_merge!(id_number: guardian_tax_id)
     end
 
-    # For US accounts, only submit the SSN Last 4 if we have enough digits in the Tax ID to get the last 4.
-    # For non-US accounts, never submit this field, it is for US accounts only.
     if guardian_country == Compliance::Countries::USA.alpha2 && guardian_tax_id && guardian_tax_id.length == 4
       hash.deep_merge!(ssn_last_4: guardian_tax_id.last(4))
     end
@@ -999,7 +991,6 @@ module StripeMerchantAccountManager
       internal_field = guardian_field_mappings[stripe_field]
       next unless internal_field
 
-      # Check if request already exists
       unless user.user_compliance_info_requests.requested.where(field_needed: internal_field).exists?
         guardian_request = user.user_compliance_info_requests.create!(
           field_needed: internal_field,
@@ -1010,7 +1001,6 @@ module StripeMerchantAccountManager
       end
     end
 
-    # Send email if new guardian requests were created
     if new_guardian_requests.any?
       guardian_fields = new_guardian_requests.map(&:field_needed)
       ContactingCreatorMailer.more_kyc_needed(user.id, guardian_fields).deliver_later(queue: "critical")
@@ -1022,7 +1012,6 @@ module StripeMerchantAccountManager
     stripe_person = stripe_event["data"]["object"]
     raise "Stripe Event #{stripe_event_id} does not contain a 'person' object." if stripe_person["object"] != "person"
 
-    # Only handle legal guardian persons
     return unless stripe_person["relationship"]&.[]("legal_guardian") == true
 
     stripe_account_id = stripe_person["account"]
@@ -1033,7 +1022,6 @@ module StripeMerchantAccountManager
     user = merchant_account.user
     return unless user.account_active?
 
-    # Check if guardian verification status changed to verified
     verification_status = stripe_person["verification"]["status"]
     if verification_status == "verified"
       handle_guardian_verification_success(stripe_event_id, stripe_person, user)
@@ -1043,13 +1031,10 @@ module StripeMerchantAccountManager
   def self.handle_guardian_verification_success(stripe_event_id, stripe_person, user)
     guardian_person_id = stripe_person["id"]
 
-    # Mark all guardian compliance info requests as verified for this guardian person
     user.user_compliance_info_requests.provided.where(guardian_person_id: guardian_person_id).find_each do |request|
       request.mark_verified!
     end
 
-    # Also mark requests that don't have a specific guardian_person_id (from legal_guardian.* requirements)
-    # These are created by handle_legal_guardian_requirements method
     requirements = stripe_person["requirements"] || {}
     future_requirements = stripe_person["future_requirements"] || {}
 
@@ -1061,7 +1046,6 @@ module StripeMerchantAccountManager
       future_requirements["past_due"]
     ].compact.flatten.uniq
 
-    # If no fields are required anymore, mark all guardian requests as verified
     guardian_fields_still_needed = all_required_fields.select do |field|
       field.start_with?("person_#{guardian_person_id}.") || field.start_with?("legal_guardian.")
     end
