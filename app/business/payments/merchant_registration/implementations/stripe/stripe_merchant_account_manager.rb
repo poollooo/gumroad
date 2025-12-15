@@ -977,48 +977,6 @@ module StripeMerchantAccountManager
     hash.deep_values_strip!
   end
 
-  def self.handle_guardian_stripe_info_requirements(stripe_event_id, stripe_account, user)
-    stripe_persons = Stripe::Account.list_persons(stripe_account.id)["data"]
-    guardian_person = stripe_persons.find { |person| person["relationship"]&.[]("legal_guardian") }
-
-    return unless guardian_person
-
-    requirements = stripe_account["requirements"] || {}
-    future_requirements = stripe_account["future_requirements"] || {}
-
-    all_required_fields = [
-      requirements["currently_due"],
-      requirements["eventually_due"],
-      requirements["past_due"],
-      future_requirements["currently_due"],
-      future_requirements["past_due"]
-    ].compact.flatten.uniq
-
-    guardian_person_id = guardian_person["id"]
-    guardian_fields_needed = all_required_fields.select { |field| field.start_with?("person_#{guardian_person_id}.") }
-
-    guardian_fields_needed.each do |stripe_field|
-      mapped_field = map_stripe_guardian_field_to_internal_field(stripe_field, guardian_person_id)
-      next unless mapped_field
-
-      unless user.user_compliance_info_requests.requested.where(field_needed: mapped_field).exists?
-        user.user_compliance_info_requests.create!(
-          field_needed: mapped_field,
-          guardian_person_id: guardian_person_id,
-          stripe_event_id: stripe_event_id,
-          due_at: (Time.zone.at(requirements["current_deadline"]) if requirements["current_deadline"])
-        )
-      end
-    end
-
-    # Send email if new guardian requests were created
-    guardian_requests = user.user_compliance_info_requests.requested.where("field_needed LIKE 'guardian_%'")
-    if guardian_requests.present?
-      guardian_fields = guardian_requests.pluck(:field_needed)
-      ContactingCreatorMailer.more_kyc_needed(user.id, guardian_fields).deliver_later(queue: "critical")
-    end
-  end
-
   def self.handle_legal_guardian_requirements(stripe_event_id, legal_guardian_fields_needed, user, requirements_due_at)
     # Map Stripe legal_guardian fields to internal guardian fields
     guardian_field_mappings = {
