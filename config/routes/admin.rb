@@ -30,7 +30,7 @@ namespace :admin do
       resource :payout_info, only: :show
       resources :latest_posts, only: :index
       resources :stats, only: :index
-      resources :products, only: :index do
+      resources :products, only: :index, param: :external_id do
         scope module: :products do
           resources :tos_violation_flags, only: [:index, :create]
           resources :purchases, only: :index
@@ -38,7 +38,6 @@ namespace :admin do
       end
       resources :guids, only: [:index]
     end
-    resources :service_charges, only: :index
     member do
       post :add_credit
       post :mass_transfer_purchases
@@ -66,7 +65,7 @@ namespace :admin do
   end
 
   resources :affiliates, only: [] do
-    resources :products, only: [:index], module: :affiliates do
+    resources :products, only: [:index], param: :external_id, module: :affiliates do
       resources :purchases, only: :index, module: :products
     end
   end
@@ -75,12 +74,13 @@ namespace :admin do
   resource :unblock_email_domains, only: [:show, :update]
   resource :suspend_users, only: [:show, :update]
   resource :refund_queue, only: [:show]
+  resources :unreviewed_users, only: [:index]
 
   resources :affiliates, only: [:index, :show], defaults: { format: "html" }
 
   get "links/:id", to: redirect("/admin/products/%{id}"), as: :link
 
-  resources :products, controller: "links", only: [:show, :destroy] do
+  resources :products, controller: "links", only: [:show, :destroy], param: :external_id do
     member do
       post :restore
       post :publish
@@ -102,13 +102,17 @@ namespace :admin do
       resource :details, controller: "details", only: [:show]
       resource :info, only: [:show]
       resource :staff_picked, controller: "staff_picked", only: [:create]
-      resources :purchases, only: [:index]
+      resources :purchases, only: [:index] do
+        collection do
+          post :mass_refund_for_fraud
+        end
+      end
     end
   end
 
   resources :comments, only: :create
 
-  resources :purchases, only: [:show] do
+  resources :purchases, only: [:show], param: :external_id do
     scope module: :purchases do
       concerns :commentable
     end
@@ -129,7 +133,7 @@ namespace :admin do
 
   resources :sales_reports, only: [:index, :create]
 
-  resources :merchant_accounts, only: [:show] do
+  resources :merchant_accounts, only: [:show], param: :external_id do
     member do
       get :live_attributes
     end

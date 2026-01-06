@@ -5,6 +5,7 @@ import { cast } from "ts-safe-cast";
 import AdminUsersProductsProduct, { type Product as ProductType } from "$app/components/Admin/Products/Product";
 import AdminUserAndProductsTabs from "$app/components/Admin/UserAndProductsTabs";
 import { Pagination, type PaginationProps } from "$app/components/Pagination";
+import { Alert } from "$app/components/ui/Alert";
 
 type AdminUsersProductsContentProps = {
   products: ProductType[];
@@ -19,16 +20,16 @@ const AdminUsersProductsContent = ({
 }: AdminUsersProductsContentProps) => {
   if (pagination.page === 1 && products.length === 0) {
     return (
-      <div className="info" role="status">
+      <Alert role="status" variant="info">
         {isAffiliateUser ? "No affiliated products." : "No products created."}
-      </div>
+      </Alert>
     );
   }
 
   return (
     <div className="space-y-4">
       {products.map((product) => (
-        <AdminUsersProductsProduct key={product.id} product={product} isAffiliateUser={isAffiliateUser} />
+        <AdminUsersProductsProduct key={product.external_id} product={product} isAffiliateUser={isAffiliateUser} />
       ))}
     </div>
   );

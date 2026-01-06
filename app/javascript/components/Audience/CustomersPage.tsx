@@ -65,6 +65,7 @@ import { FileKindIcon } from "$app/components/FileRowContent";
 import { Icon } from "$app/components/Icons";
 import { LoadingSpinner } from "$app/components/LoadingSpinner";
 import { Modal } from "$app/components/Modal";
+import { NavigationButtonInertia } from "$app/components/NavigationButton";
 import { NumberInput } from "$app/components/NumberInput";
 import { Pagination, PaginationProps } from "$app/components/Pagination";
 import { Popover } from "$app/components/Popover";
@@ -75,8 +76,10 @@ import { ReviewVideoPlayer } from "$app/components/ReviewVideoPlayer";
 import { Select } from "$app/components/Select";
 import { showAlert } from "$app/components/server-components/Alert";
 import { Toggle } from "$app/components/Toggle";
+import { Alert } from "$app/components/ui/Alert";
 import { PageHeader } from "$app/components/ui/PageHeader";
-import Placeholder from "$app/components/ui/Placeholder";
+import { Pill } from "$app/components/ui/Pill";
+import { Placeholder, PlaceholderImage } from "$app/components/ui/Placeholder";
 import { Row, RowActions, RowContent, Rows } from "$app/components/ui/Rows";
 import { Sheet, SheetHeader } from "$app/components/ui/Sheet";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "$app/components/ui/Table";
@@ -410,32 +413,37 @@ const CustomersPage = ({
                 </WithTooltip>
               }
             >
-              <div className="flex flex-col gap-4">
-                <h3>Download sales as CSV</h3>
-                <div>
-                  {exportNames
-                    ? `This will download sales of '${exportNames}' as a CSV, with each purchase on its own row.`
-                    : "This will download a CSV with each purchase on its own row."}
-                </div>
-                <DateRangePicker from={from} to={to} setFrom={setFrom} setTo={setTo} />
-                <NavigationButton
-                  color="primary"
-                  href={Routes.export_purchases_path({
-                    format: "csv",
-                    start_time: lightFormat(from, "yyyy-MM-dd"),
-                    end_time: lightFormat(to, "yyyy-MM-dd"),
-                    product_ids: includedProductIds,
-                    variant_ids: includedVariantIds,
-                  })}
-                >
-                  Download
-                </NavigationButton>
-                {count > 2000 && (
-                  <div className="mt-2 text-sm text-gray-600">
-                    Exports over 2,000 rows will be processed in the background and emailed to you.
+              {(close) => (
+                <div className="flex flex-col gap-4">
+                  <h3>Download sales as CSV</h3>
+                  <div>
+                    {exportNames
+                      ? `This will download sales of '${exportNames}' as a CSV, with each purchase on its own row.`
+                      : "This will download a CSV with each purchase on its own row."}
                   </div>
-                )}
-              </div>
+                  <DateRangePicker from={from} to={to} setFrom={setFrom} setTo={setTo} />
+                  <NavigationButtonInertia
+                    color="primary"
+                    href={Routes.export_purchases_path()}
+                    method="post"
+                    preserveScroll
+                    data={{
+                      start_time: lightFormat(from, "yyyy-MM-dd"),
+                      end_time: lightFormat(to, "yyyy-MM-dd"),
+                      product_ids: includedProductIds,
+                      variant_ids: includedVariantIds,
+                    }}
+                    onSuccess={() => close()}
+                  >
+                    Download
+                  </NavigationButtonInertia>
+                  {count > 2000 && (
+                    <div className="mt-2 text-sm text-gray-600">
+                      Exports over 2,000 rows will be processed in the background and emailed to you.
+                    </div>
+                  )}
+                </div>
+              )}
             </Popover>
           </>
         }
@@ -480,37 +488,37 @@ const CustomersPage = ({
                       <TableCell>
                         {customer.product.name}
                         {customer.subscription?.is_installment_plan ? (
-                          <span className="pill small" style={{ marginLeft: "var(--spacer-2)" }}>
+                          <Pill size="small" className="ml-2">
                             Installments
-                          </span>
+                          </Pill>
                         ) : null}
                         {customer.is_bundle_purchase ? (
-                          <span className="pill small" style={{ marginLeft: "var(--spacer-2)" }}>
+                          <Pill size="small" className="ml-2">
                             Bundle
-                          </span>
+                          </Pill>
                         ) : null}
                         {customer.subscription ? (
                           !customer.subscription.is_installment_plan && customer.subscription.status !== "alive" ? (
-                            <span className="pill small" style={{ marginLeft: "var(--spacer-2)" }}>
+                            <Pill size="small" className="ml-2">
                               Inactive
-                            </span>
+                            </Pill>
                           ) : null
                         ) : (
                           <>
                             {customer.partially_refunded ? (
-                              <span className="pill small" style={{ marginLeft: "var(--spacer-2)" }}>
+                              <Pill size="small" className="ml-2">
                                 Partially refunded
-                              </span>
+                              </Pill>
                             ) : null}
                             {customer.refunded ? (
-                              <span className="pill small" style={{ marginLeft: "var(--spacer-2)" }}>
+                              <Pill size="small" className="ml-2">
                                 Refunded
-                              </span>
+                              </Pill>
                             ) : null}
                             {customer.chargedback ? (
-                              <span className="pill small" style={{ marginLeft: "var(--spacer-2)" }}>
+                              <Pill size="small" className="ml-2">
                                 Chargedback
-                              </span>
+                              </Pill>
                             ) : null}
                           </>
                         )}
@@ -519,9 +527,9 @@ const CustomersPage = ({
                             tooltipProps={{ className: "w-80 p-0" }}
                             tip={<UtmLinkStack link={customer.utm_link} showHeader={false} />}
                           >
-                            <span className="pill small" style={{ marginLeft: "var(--spacer-2)" }}>
+                            <Pill size="small" className="ml-2">
                               UTM
-                            </span>
+                            </Pill>
                           </WithTooltip>
                         ) : null}
                       </TableCell>
@@ -553,9 +561,7 @@ const CustomersPage = ({
           </section>
         ) : (
           <Placeholder>
-            <figure>
-              <img src={placeholder} />
-            </figure>
+            <PlaceholderImage src={placeholder} />
             {searchQuery !== null ? (
               <h2>No sales found</h2>
             ) : (
@@ -789,44 +795,39 @@ const CustomerDrawer = ({
           <h2>{customer.product.name}</h2>
         </div>
       </SheetHeader>
-      {commission ? <CommissionStatusPill commission={commission} /> : null}
-      {customer.is_additional_contribution ? (
-        <div role="status" className="info">
-          <div>
-            <strong>Additional amount: </strong>
-            This is an additional contribution, added to a previous purchase of this product.
-          </div>
+      {commission ? (
+        <div>
+          <CommissionStatusPill commission={commission} />
         </div>
+      ) : null}
+      {customer.is_additional_contribution ? (
+        <Alert role="status" variant="info">
+          <strong>Additional amount: </strong>
+          This is an additional contribution, added to a previous purchase of this product.
+        </Alert>
       ) : null}
       {customer.ppp ? (
-        <div role="status" className="info">
-          <div>
-            This customer received a purchasing power parity discount of <b>{customer.ppp.discount}</b> because they are
-            located in <b>{customer.ppp.country}</b>.
-          </div>
-        </div>
+        <Alert role="status" variant="info">
+          This customer received a purchasing power parity discount of <b>{customer.ppp.discount}</b> because they are
+          located in <b>{customer.ppp.country}</b>.
+        </Alert>
       ) : null}
       {customer.giftee_email ? (
-        <div role="status" className="info">
+        <Alert role="status" variant="info">
           {customer.email} purchased this for {customer.giftee_email}.
-        </div>
+        </Alert>
       ) : null}
       {customer.is_preorder ? (
-        <div role="status" className="info">
-          <div>
-            <strong>Pre-order: </strong>
-            This is a pre-order authorization. The customer's card has not been charged yet.
-          </div>
-        </div>
+        <Alert role="status" variant="info">
+          <strong>Pre-order: </strong>
+          This is a pre-order authorization. The customer's card has not been charged yet.
+        </Alert>
       ) : null}
       {customer.affiliate && customer.affiliate.type !== "Collaborator" ? (
-        <div role="status" className="info">
-          <div>
-            <strong>Affiliate: </strong>
-            An affiliate ({customer.affiliate.email}) helped you make this sale and received {customer.affiliate.amount}
-            .
-          </div>
-        </div>
+        <Alert role="status" variant="info">
+          <strong>Affiliate: </strong>
+          An affiliate ({customer.affiliate.email}) helped you make this sale and received {customer.affiliate.amount}.
+        </Alert>
       ) : null}
       <EmailSection
         label="Email"
@@ -943,7 +944,7 @@ const CustomerDrawer = ({
             {customer.discount.code ? (
               <div>
                 {formatDiscount(customer.discount, customer.price.currency_type)} off with code{" "}
-                <div className="pill small">{customer.discount.code.toUpperCase()}</div>
+                <Pill size="small">{customer.discount.code.toUpperCase()}</Pill>
               </div>
             ) : (
               `${formatDiscount(customer.discount, customer.price.currency_type)} off`
@@ -1313,19 +1314,16 @@ const CustomerDrawer = ({
 };
 
 const CommissionStatusPill = ({ commission }: { commission: Commission }) => (
-  <span
-    className={cx("pill small", {
-      primary: commission.status === "completed",
-      danger: commission.status === "cancelled",
-    })}
-    style={{ width: "fit-content" }}
+  <Pill
+    size="small"
+    color={commission.status === "completed" ? "primary" : commission.status === "cancelled" ? "danger" : undefined}
   >
     {commission.status === "in_progress"
       ? "In progress"
       : commission.status === "completed"
         ? "Completed"
         : "Cancelled"}
-  </span>
+  </Pill>
 );
 
 const AddressSection = ({
@@ -1507,9 +1505,9 @@ const TrackingSection = ({
           </div>
         ) : (
           <div>
-            <div role="status" className="success">
+            <Alert role="status" variant="success">
               Shipped
-            </div>
+            </Alert>
           </div>
         )
       ) : (
@@ -1889,21 +1887,19 @@ const UtmLinkStack = ({ link, showHeader }: { link: Customer["utm_link"]; showHe
             <h3>UTM link</h3>
           </section>
           <div>
-            <small role="status" className="info">
-              <span>
-                This sale was driven by a{" "}
-                <a href={link.utm_url} target="_blank" rel="noreferrer">
-                  UTM link
-                </a>
-                .
-              </span>
-            </small>
+            <Alert className="text-sm" role="status" variant="info">
+              This sale was driven by a{" "}
+              <a href={link.utm_url} target="_blank" rel="noreferrer">
+                UTM link
+              </a>
+              .
+            </Alert>
           </div>
         </>
       ) : null}
       <div>
         <h5>Title</h5>
-        <a href={Routes.utm_links_dashboard_path({ query: link.title })} target="_blank" rel="noreferrer">
+        <a href={Routes.dashboard_utm_links_path({ query: link.title })} target="_blank" rel="noreferrer">
           {link.title}
         </a>
       </div>
@@ -2212,14 +2208,12 @@ const RefundForm = ({
           )}
         </div>
         {showRefundFeeNotice ? (
-          <div role="status" className="info">
-            <p>
-              Going forward, Gumroad does not return any fees when a payment is refunded.{" "}
-              <a href="/help/article/47-how-to-refund-a-customer" target="_blank" rel="noreferrer">
-                Learn more
-              </a>
-            </p>
-          </div>
+          <Alert role="status" variant="info">
+            Going forward, Gumroad does not return any fees when a payment is refunded.{" "}
+            <a href="/help/article/47-how-to-refund-a-customer" target="_blank" rel="noreferrer">
+              Learn more
+            </a>
+          </Alert>
         ) : null}
       </fieldset>
       <div style={{ display: "contents" }}>
@@ -2286,16 +2280,16 @@ const ChargeRow = ({
             <Icon name="arrow-up-right-square" />
           </a>
           {purchase.partially_refunded ? (
-            <span className="pill small">Partial refund</span>
+            <Pill size="small">Partial refund</Pill>
           ) : purchase.refunded ? (
-            <span className="pill small">Refunded</span>
+            <Pill size="small">Refunded</Pill>
           ) : null}
           {purchase.is_upgrade_purchase ? (
             <WithTooltip tip="This is an upgrade charge, generated when the subscriber upgraded to a more expensive plan.">
-              <span className="pill small">Upgrade</span>
+              <Pill size="small">Upgrade</Pill>
             </WithTooltip>
           ) : null}
-          {purchase.chargedback ? <span className="pill small">Chargedback</span> : null}
+          {purchase.chargedback ? <Pill size="small">Chargedback</Pill> : null}
         </section>
         {!purchase.refunded && !purchase.chargedback && purchase.amount_refundable > 0 ? (
           <button className="underline" onClick={() => setIsRefunding((prev) => !prev)}>
@@ -2363,9 +2357,9 @@ const ChargesSection = ({
         <>
           {remainingCharges !== null ? (
             <section>
-              <div role="status" className="info">
+              <Alert role="status" variant="info">
                 {`${remainingCharges} ${remainingCharges > 1 ? "charges" : "charge"} remaining`}
-              </div>
+              </Alert>
             </section>
           ) : null}
           {charges.map((charge) => (

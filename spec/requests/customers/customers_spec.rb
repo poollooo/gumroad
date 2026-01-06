@@ -252,6 +252,8 @@ describe "Sales page", type: :system, js: true do
             {
               start_time: 1.month.ago.strftime("%Y-%m-%d"),
               end_time: Date.today.strftime("%Y-%m-%d"),
+              product_ids: [],
+              variant_ids: [],
             }
           )
         )
@@ -348,7 +350,7 @@ describe "Sales page", type: :system, js: true do
 
         row = find(:table_row, { "Email" => installment_plan_purchase.email })
         within row do
-          expect(page).to have_text("Awesome ProductInstallments")
+          expect(page).to have_text("Awesome Product Installments", normalize_ws: true)
           expect(page).to have_text("$10 a month")
         end
         row.click

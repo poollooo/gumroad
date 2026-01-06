@@ -1,12 +1,11 @@
+import { Link, router } from "@inertiajs/react";
 import classNames from "classnames";
 import * as React from "react";
-import { cast } from "ts-safe-cast";
 
 import { exportPayouts } from "$app/data/balance";
-import { createInstantPayout } from "$app/data/payout";
 import { formatPriceCentsWithCurrencySymbol, formatPriceCentsWithoutCurrencySymbol } from "$app/utils/currency";
 import { asyncVoid } from "$app/utils/promise";
-import { assertResponseError, request } from "$app/utils/request";
+import { assertResponseError } from "$app/utils/request";
 
 import { Button, NavigationButton } from "$app/components/Button";
 import { Icon } from "$app/components/Icons";
@@ -15,8 +14,10 @@ import { Modal } from "$app/components/Modal";
 import { PaginationProps } from "$app/components/Pagination";
 import { ExportPayoutsPopover } from "$app/components/Payouts/ExportPayoutsPopover";
 import { showAlert } from "$app/components/server-components/Alert";
+import { Alert } from "$app/components/ui/Alert";
 import { PageHeader } from "$app/components/ui/PageHeader";
-import Placeholder from "$app/components/ui/Placeholder";
+import { Pill } from "$app/components/ui/Pill";
+import { Placeholder, PlaceholderImage } from "$app/components/ui/Placeholder";
 import { Tabs, Tab } from "$app/components/ui/Tabs";
 import { useUserAgentInfo } from "$app/components/UserAgent";
 import { WithTooltip } from "$app/components/WithTooltip";
@@ -336,9 +337,7 @@ const Period = ({ payoutPeriodData }: { payoutPeriodData: PayoutPeriodData }) =>
         }}
       >
         {payoutPeriodData.status === "completed" ? <span>{heading}</span> : <h2>{heading}</h2>}
-        {"type" in payoutPeriodData && payoutPeriodData.type === "instant" ? (
-          <div className="pill small">Instant</div>
-        ) : null}
+        {"type" in payoutPeriodData && payoutPeriodData.type === "instant" ? <Pill size="small">Instant</Pill> : null}
         <span style={{ marginLeft: "auto" }}>{payoutPeriodData.displayable_payout_period_range}</span>
         {payoutPeriodData.status === "completed" && payoutPeriodData.payment_external_id ? (
           <WithTooltip position="top" tip="Export">
@@ -531,9 +530,7 @@ const Period = ({ payoutPeriodData }: { payoutPeriodData: PayoutPeriodData }) =>
 const PeriodEmpty = ({ minimumPayoutAmountCents }: { minimumPayoutAmountCents: number }) => (
   <div className="period period-empty full column">
     <Placeholder>
-      <figure>
-        <img src={placeholder} />
-      </figure>
+      <PlaceholderImage src={placeholder} />
       <h2>Let's get you paid.</h2>
       Reach a balance of at least{" "}
       {formatPriceCentsWithCurrencySymbol("usd", minimumPayoutAmountCents, {
@@ -650,36 +647,21 @@ const Payouts = ({
   past_payout_period_data,
   instant_payout,
   show_instant_payouts_notice,
-  pagination: initialPagination,
+  pagination,
   tax_center_enabled,
 }: PayoutsProps) => {
   const loggedInUser = useLoggedInUser();
   const userAgentInfo = useUserAgentInfo();
 
-  const [pastPayoutPeriodData, setPastPayoutPeriodData] = React.useState(past_payout_period_data);
-  const [pagination, setPagination] = React.useState(initialPagination);
-
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const loadNextPage = async () => {
-    setIsLoading(true);
-    try {
-      const response = await request({
-        method: "GET",
-        accept: "json",
-        url: Routes.payments_paged_path({ page: pagination.page + 1 }),
-      })
-        .then((res) => res.json())
-        .then((json) => cast<{ payouts: PayoutPeriodData[]; pagination: PaginationProps }>(json));
-
-      setPastPayoutPeriodData((prevData) => [...prevData, ...response.payouts]);
-      setPagination(response.pagination);
-    } catch (error) {
-      assertResponseError(error);
-      showAlert(error.message, "error");
-    } finally {
-      setIsLoading(false);
-    }
+  const loadNextPage = () => {
+    router.reload({
+      data: { page: pagination.page + 1 },
+      only: ["pagination", "past_payout_period_data"],
+      onStart: () => setIsLoading(true),
+      onFinish: () => setIsLoading(false),
+    });
   };
 
   const [isInstantPayoutModalOpen, setIsInstantPayoutModalOpen] = React.useState(false);
@@ -692,22 +674,27 @@ const Payouts = ({
   const instantPayoutFee = instant_payout
     ? instantPayoutAmountCents - Math.floor(instantPayoutAmountCents / (1 + INSTANT_PAYOUT_FEE_PERCENTAGE))
     : 0;
-  const onRequestInstantPayout = async () => {
+  const onRequestInstantPayout = () => {
     if (!instant_payout) return;
-    setIsLoading(true);
-    try {
-      await createInstantPayout(
-        instant_payout.payable_balances.find((balance) => balance.id === instantPayoutId)?.date ??
-          new Date().toISOString(),
-      );
-      window.location.reload();
-    } catch (error) {
-      assertResponseError(error);
-      showAlert(error.message, "error");
-    } finally {
-      setIsInstantPayoutModalOpen(false);
-      setIsLoading(false);
-    }
+
+    const selectedDate =
+      instant_payout.payable_balances.find((balance) => balance.id === instantPayoutId)?.date ??
+      new Date().toISOString();
+
+    router.post(
+      Routes.instant_payouts_path(),
+      { date: selectedDate },
+      {
+        onStart: () => {
+          setIsInstantPayoutModalOpen(false);
+          setIsLoading(true);
+        },
+        onFinish: () => setIsLoading(false),
+        onError: () => {
+          showAlert("Failed to initiate instant payout. Please try again.", "error");
+        },
+      },
+    );
   };
 
   if (!loggedInUser) return null;
@@ -736,11 +723,11 @@ const Payouts = ({
       >
         {tax_center_enabled ? (
           <Tabs>
-            <Tab href={Routes.balance_path()} isSelected>
-              Payouts
+            <Tab isSelected asChild>
+              <Link href={Routes.balance_path()}>Payouts</Link>
             </Tab>
-            <Tab href={Routes.tax_center_path()} isSelected={false}>
-              Taxes
+            <Tab isSelected={false} asChild>
+              <Link href={Routes.tax_center_path()}>Taxes</Link>
             </Tab>
           </Tabs>
         ) : null}
@@ -748,45 +735,39 @@ const Payouts = ({
       <div className="space-y-8 p-4 md:p-8">
         {!instant_payout ? (
           show_instant_payouts_notice ? (
-            <div className="info" role="status">
-              <p>
-                To enable <strong>instant</strong> payouts,{" "}
-                <a href={Routes.settings_payments_path()}>update your payout method</a> to one of the{" "}
-                <a href="https://docs.stripe.com/payouts/instant-payouts-banks">
-                  supported bank accounts or debit cards
-                </a>
-                .
-              </p>
-            </div>
+            <Alert role="status" variant="info">
+              To enable <strong>instant</strong> payouts,{" "}
+              <a href={Routes.settings_payments_path()}>update your payout method</a> to one of the{" "}
+              <a href="https://docs.stripe.com/payouts/instant-payouts-banks">supported bank accounts or debit cards</a>
+              .
+            </Alert>
           ) : null
         ) : instant_payout.payable_amount_cents >= MINIMUM_INSTANT_PAYOUT_AMOUNT_CENTS ? (
-          <div className="info" role="status">
-            <div>
-              <b>
-                You have{" "}
-                {formatPriceCentsWithCurrencySymbol("usd", instant_payout.payable_amount_cents, {
-                  symbolFormat: "short",
-                  noCentsIfWhole: false,
-                })}{" "}
-                available for instant payout:
-              </b>{" "}
-              No need to wait—get paid now!
-              <div style={{ marginTop: "var(--spacer-3)" }}>
-                {instant_payout.payable_balances.some(
-                  (balance) => balance.amount_cents > MAXIMUM_INSTANT_PAYOUT_AMOUNT_CENTS,
-                ) ? (
-                  <a href={Routes.support_index_path()}>Contact us for an instant payout</a>
-                ) : (
-                  <Button
-                    small
-                    color="primary"
-                    aria-label="Get paid now"
-                    onClick={() => setIsInstantPayoutModalOpen(true)}
-                  >
-                    Get paid!
-                  </Button>
-                )}
-              </div>
+          <Alert role="status" variant="info">
+            <b>
+              You have{" "}
+              {formatPriceCentsWithCurrencySymbol("usd", instant_payout.payable_amount_cents, {
+                symbolFormat: "short",
+                noCentsIfWhole: false,
+              })}{" "}
+              available for instant payout:
+            </b>{" "}
+            No need to wait—get paid now!
+            <div className="mt-3">
+              {instant_payout.payable_balances.some(
+                (balance) => balance.amount_cents > MAXIMUM_INSTANT_PAYOUT_AMOUNT_CENTS,
+              ) ? (
+                <a href={Routes.support_index_path()}>Contact us for an instant payout</a>
+              ) : (
+                <Button
+                  small
+                  color="primary"
+                  aria-label="Get paid now"
+                  onClick={() => setIsInstantPayoutModalOpen(true)}
+                >
+                  Get paid!
+                </Button>
+              )}
             </div>
             <Modal
               open={isInstantPayoutModalOpen}
@@ -794,7 +775,7 @@ const Payouts = ({
               footer={
                 <>
                   <Button onClick={() => setIsInstantPayoutModalOpen(false)}>Cancel</Button>
-                  <Button color="primary" disabled={isLoading} onClick={() => void onRequestInstantPayout()}>
+                  <Button color="primary" disabled={isLoading} onClick={() => onRequestInstantPayout()}>
                     Get paid!
                   </Button>
                 </>
@@ -872,66 +853,62 @@ const Payouts = ({
                   </footer>
                 </div>
                 {instantPayoutAmountCents > MAXIMUM_INSTANT_PAYOUT_AMOUNT_CENTS ? (
-                  <div role="status" className="info">
+                  <Alert role="status" variant="info">
                     Your balance exceeds the maximum amount for a single instant payout, so we'll automatically split
                     your balance into multiple payouts.
-                  </div>
+                  </Alert>
                 ) : null}
               </fieldset>
             </Modal>
-          </div>
+          </Alert>
         ) : null}
         {payouts_status === "paused" ? (
-          <div className="warning" role="status">
-            <p>
-              {payouts_paused_by === "stripe" ? (
-                <strong>
-                  Your payouts are currently paused by our payment processor. Please check your{" "}
-                  <a href="/settings/payments">Payment Settings</a> for any verification requirements.
-                </strong>
-              ) : payouts_paused_by === "admin" ? (
-                <strong>
-                  Your payouts have been paused by Gumroad admin.
-                  {payouts_paused_for_reason ? ` Reason for pause: ${payouts_paused_for_reason}` : null}
-                </strong>
-              ) : payouts_paused_by === "system" ? (
-                <strong>
-                  Your payouts have been automatically paused for a security review and will be resumed once the review
-                  completes.
-                </strong>
-              ) : (
-                <strong>
-                  You have paused your payouts. Please go to <a href="/settings/payments">Payment Settings</a> to resume
-                  payouts.
-                </strong>
-              )}
-            </p>
-          </div>
+          <Alert role="status" variant="warning">
+            {payouts_paused_by === "stripe" ? (
+              <strong>
+                Your payouts are currently paused by our payment processor. Please check your{" "}
+                <a href="/settings/payments">Payment Settings</a> for any verification requirements.
+              </strong>
+            ) : payouts_paused_by === "admin" ? (
+              <strong>
+                Your payouts have been paused by Gumroad admin.
+                {payouts_paused_for_reason ? ` Reason for pause: ${payouts_paused_for_reason}` : null}
+              </strong>
+            ) : payouts_paused_by === "system" ? (
+              <strong>
+                Your payouts have been automatically paused for a security review and will be resumed once the review
+                completes.
+              </strong>
+            ) : (
+              <strong>
+                You have paused your payouts. Please go to <a href="/settings/payments">Payment Settings</a> to resume
+                payouts.
+              </strong>
+            )}
+          </Alert>
         ) : null}
         {next_payout_period_data != null ? (
           next_payout_period_data.has_stripe_connect ? (
-            <div className="info" role="status">
-              <p>For Stripe Connect users, all future payouts will be deposited directly to your Stripe account</p>
-            </div>
+            <Alert role="status" variant="info">
+              For Stripe Connect users, all future payouts will be deposited directly to your Stripe account
+            </Alert>
           ) : (
             <section className="grid gap-4">
               {next_payout_period_data.payout_note &&
               !["processing", "paused"].includes(next_payout_period_data.status) ? (
-                <div className="info" role="status">
-                  <p>{next_payout_period_data.payout_note}</p>
-                </div>
+                <Alert role="status" variant="info">
+                  {next_payout_period_data.payout_note}
+                </Alert>
               ) : null}
               {next_payout_period_data.status === "not_payable" ? (
-                pastPayoutPeriodData.length > 0 ? (
-                  <div className="info" role="status">
-                    <p>
-                      Reach a balance of at least{" "}
-                      {formatPriceCentsWithCurrencySymbol("usd", next_payout_period_data.minimum_payout_amount_cents, {
-                        symbolFormat: "short",
-                      })}{" "}
-                      to be paid out for your sales.
-                    </p>
-                  </div>
+                past_payout_period_data.length > 0 ? (
+                  <Alert role="status" variant="info">
+                    Reach a balance of at least{" "}
+                    {formatPriceCentsWithCurrencySymbol("usd", next_payout_period_data.minimum_payout_amount_cents, {
+                      symbolFormat: "short",
+                    })}{" "}
+                    to be paid out for your sales.
+                  </Alert>
                 ) : (
                   <PeriodEmpty minimumPayoutAmountCents={next_payout_period_data.minimum_payout_amount_cents} />
                 )
@@ -951,18 +928,18 @@ const Payouts = ({
           </section>
         ) : null}
 
-        {pastPayoutPeriodData.length > 0 ? (
+        {past_payout_period_data.length > 0 ? (
           <>
             <section>
               <h2>Past payouts</h2>
               <section className="flex flex-col gap-4">
-                {pastPayoutPeriodData.map((payoutPeriodData, idx) => (
+                {past_payout_period_data.map((payoutPeriodData, idx) => (
                   <Period key={idx} payoutPeriodData={payoutPeriodData} />
                 ))}
               </section>
             </section>
             {pagination.page < pagination.pages ? (
-              <Button color="primary" onClick={() => void loadNextPage()} disabled={isLoading}>
+              <Button color="primary" onClick={loadNextPage} disabled={isLoading}>
                 Show older payouts
               </Button>
             ) : null}
